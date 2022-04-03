@@ -2,7 +2,7 @@
 {-# HLINT ignore "Use camelCase" #-}
 module Receptors where
 
-
+-- we will do 'particle physics' below 
 -- we will make calculation with 'clever indexing' 
 -- I name the indexes as spins as in quantum fields theory   
 -- where spin numbers are used actually for the same reasons : 
