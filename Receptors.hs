@@ -1,41 +1,40 @@
 module Receptors where
 
 
---  we will make calculation with 'clerer indexing' 
--- of course if we rely on indexing 'we do not understand something ...' 
--- and in the tasks we really do not understand somethig 
--- but the clerer indexing is a good and unserstandable exercise 
--- we will name our digits 'spins' in relation with physics 
+-- we will make calculation with 'clever indexing' 
+-- I name the indexes as spins as in quantum fields theory   
 -- where spin numbers are used actually for the same reasons : 
--- to target interacting particles 
+-- to target interactions between particles 
 
 -- in the receptors computations the basic receptors types are very 
 -- simple like (), Bool ( 2 valued set) etc.. 
--- this is the same simplicity as a machine register is also very simple : 
--- it keeps only 0 or 1 value.
--- but there are billions on such registers with clever linking between each 
--- other
--- in cell biology our somple receptors are linked by 'clever shaping' 
--- which we will transform in 'clever' indexing 
+-- this is the same simplicity as a machine register simplicity : 
+-- the rigisters  are very simple : they keeps only 0 or 1 value.
+-- but there are billions on such registers with very complex linking topology 
+-- between them 
+-- same way in cell biology our simple receptors are linked by 'clever shaping' 
+-- which we will transform in 'clever' indexing -> the indexing will arise from the 
+-- topology of interaction 
 
 
 -- We will mostly model Session machines : machines which implement 
--- Session Types. Such machines are responsible for interaction between 
--- two (or even more) cells. 
+-- Session Types. These are bundles of receptors. Such machines are responsible 
+-- for interaction between two (or even more) cells and correspond to 'human made' 
+-- values of session Types. 
+-- Haskell is used for the modelling ( but later most probably I will switch to Idris)
 
 -- Some basic types 
 
--- from Birth / Death (or Rise / Low ) 
+-- the name is from Birth / Death (or Rise / Low ) 
 -- there are sources and sinks which correspond to value generation
 -- and value substitution to functions
--- second elt in (Int, Int) part correspond to reall type (like () or Bool)
--- there is to be function from Int to types 
-
--- function from Int to Types : there only a few basic Types which are used in 
+-- second elt in (Int, Int) part correspond to a Type (like () or Bool or Int)
+-- there is to be function from Int to types to enumerate Types 
+-- such function exists because there only a few basic Types which are used in 
 -- cell machines, so such function may exist 
 -- but in Haskell we can not make a function from Int to Types 
--- may be we have to go to Idris 
--- now we will just keep the function in our mind : 
+-- (it is possible in Idris)
+-- we will just keep the function in our mind : 
 -- 0 -> ()
 -- 1 -> Bool 
 -- 2 -> Int 
@@ -48,9 +47,10 @@ module Receptors where
 -- function which will consume the value
 -- if length > 1 the fst elt correspond to 'coordinate' of value 
 -- which will be substituted into the function 
--- the snd elt in the pair correspont to the Type of used data 
+-- the snd elt in the pair correspont to the Type of data 
 -- here it is represented by Int number 
 type Spin_SS = (Int,Int)
+
 
 -- ST is from Space / Time : it is Nat valued position in the 
 -- list of receptors in our Session machine ( see later)
@@ -70,14 +70,20 @@ up_down Down = Up
 -- Our particle is some clever collection of spins 
 -- which actually correspond to our 'clever enumeration' 
 -- which arise from out configutation of interacting compartments 
--- from topology of our configuration (our geometry) 
+-- from topology of our configuration of interactions (our geometry) 
 data Receptors = Receptor { ud :: Spin_UD,
                             st :: Spin_ST,
                             sss :: [Spin_SS] }
 
--- mass of receptor 
+-- mass of receptor : the mass is to be >= 0 
+-- mass of value is 0 -> the value corresoind to a list of length 1 
+-- remind as we take the final result a value from stack of lenght 1 
+-- the mass of functions is >= 0
+-- so we use the eager evaluation; the interaction is transmitted by 
+-- particles of mass 0 (values) between particles of mass >= 0 which are 
+-- functions 
 mass :: Receptors  -> Int
-mass p = length $ sss p
+mass p = (length $ sss p) -1 
 
 val1 :: Receptors
 val1 = Receptor {ud = Up, st = 3, sss = [(1,3),(2,3),(3,3)]}
@@ -93,18 +99,19 @@ val2 = Receptor {ud = Down, st = 1, sss = [(3,3)]}
 lawsOfUniverse_1 :: Receptors -> Receptors -> Bool
 lawsOfUniverse_1 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
   tf@Receptor{ud = tf_ud, st = tf_st, sss =tf_sss } =
-  -- the left particle is to be a value -> partile of mass = 1 
-  not (mass tv == 1)
+  -- the left particle is to be a value -> partile of mass = 0
+  mass tv == 0
   &&
   -- 'source' label in  tf has to be the same as 'sink' label in tv
   -- the Types of interaction have to be the same 
   -- in out case it means equality between snd elements  
   (tv_st == fst (head tf_sss)) && snd (head tv_sss) == snd (head tf_sss)
   &&
-  -- mass of tf is to be at least 2 ( it is function)
-  mass tf >= 2
+  -- mass of tf is to be at least 1 ( it is function)
+  mass tf >= 1
   &&
-  -- st is to be >= 0 
+  -- st is to be >= 0 , in the bundle (list) of receptors we enumerate 
+  -- position starting from 0 
   (tf_st >= 0) && (tv_st >= 0)
   &&
   -- ud spin of value is to be Down and ud spin of tf is to be Up
@@ -113,9 +120,9 @@ lawsOfUniverse_1 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
 
 -- laws for interaction between particles of different 
 -- compartments : only a value at one side may interact 
--- with id - receptor of another side (ud spins are to be opposite)
+-- with receptor (actually id function) of another side (ud spins are to be opposite)
 -- ud spin of value is to be Up 
--- first is value / second is id function 
+-- first argument is value / second is id function 
 lawsOfUniverse_2 :: Receptors -> Receptors -> Bool
 lawsOfUniverse_2 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
   tf@Receptor{ud = tf_ud, st = tf_st, sss = tf_sss } =
@@ -126,10 +133,9 @@ lawsOfUniverse_2 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
   tv_st == tf_st 
   &&
 -- masses 
-  (mass tv == 1) && (mass tf == 2)
+  (mass tv == 0) && (mass tf == 1)
 -- many other laws are to be added 
--- all of it may be force us to use Idris with its universal types 
--- possibilities 
+-- it forces again to use Idris with its dependent types 
 
 --- to be continued :) 
 
