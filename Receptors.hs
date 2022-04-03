@@ -98,13 +98,16 @@ data Receptors = Receptor { ud :: Spin_UD,
                             st :: Spin_ST,
                             sss :: [Spin_SS] }
 
--- mass of receptor : the mass is to be >= 0 
--- mass of value is 0 -> the value corresoind to a list of length 1 
--- remind as we take the final result a value from stack of lenght 1 
--- the mass of functions is >= 0
--- so we use the eager evaluation; the interaction is transmitted by 
+-- mass of a receptor : the mass is to be >= 0 
+-- mass of a value is 0 -> the value corresoind to a list of length 1 
+-- remind as we take the final result as a value from stack of lenght 1 
+-- the mass of functions is > 0
+-- so we use the eager evaluation; we will not glue together unevaluated 
+-- functions 
+-- the interaction is transmitted by 
 -- particles of mass 0 (values, or 'generalised photons') between particles of mass > 0 which are 
 -- functions 
+-- we do the 'downshift' from the lenght of the list by 1 to get the mass of a particle 
 mass :: Receptors  -> Int
 mass p = length (sss p) -1
 
