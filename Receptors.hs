@@ -17,11 +17,19 @@ module Receptors where
 -- topology of interaction 
 
 
--- We will mostly model Session machines : machines which implement 
+-- We will start with model of Session machines : machines which implement 
 -- Session Types. These are bundles of receptors. Such machines are responsible 
 -- for interaction between two (or even more) cells and correspond to 'human made' 
 -- values of session Types. 
 -- Haskell is used for the modelling ( but later most probably I will switch to Idris)
+
+-- we will construct particles (receptors) and Laws of Univerce : which will be some predicates 
+-- to interact (every interaction will be evaluation of some function) the particles 
+-- are to correspond to Laws of Universe ; otherwise an interaction is not possible 
+
+-- there will be Action function and principle : collection of results of 
+-- interactions at every step, glued by && between each other -> so, in case of an valid 
+-- interaction the total result of the collection is to be True 
 
 -- Some basic types 
 
@@ -29,7 +37,7 @@ module Receptors where
 -- there are sources and sinks which correspond to value generation
 -- and value substitution to functions
 -- second elt in (Int, Int) part correspond to a Type (like () or Bool or Int)
--- there is to be function from Int to types to enumerate Types 
+-- there is to be function from Int to types ( with kind *) to enumerate Types 
 -- such function exists because there only a few basic Types which are used in 
 -- cell machines, so such function may exist 
 -- but in Haskell we can not make a function from Int to Types 
@@ -38,7 +46,20 @@ module Receptors where
 -- 0 -> ()
 -- 1 -> Bool 
 -- 2 -> Int 
+-- 3 -> Char
+-- 4 -> String 
 -- ..... yet undefined 
+
+-- we will do it as function from Int to String 
+-- and out type checking for type correspondence will use 
+-- checking for equality of strings 
+int_to_types :: Int -> String 
+int_to_types 0 = "()"
+int_to_types 1 = "Bool"
+int_to_types 2 = "Int"
+int_to_types 3 = "Char"
+int_to_types 4 = "String"
+int_to_types _ = undefined 
 
 -- from Source to Sink 
 -- the length (mass) of the list is to be >= 1
