@@ -133,6 +133,8 @@ lawsOfUniverse_2 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
 -- all of it may be force us to use Idris with its universal types 
 -- possibilities 
 
+--- to be continued :) 
+
 
 
 
