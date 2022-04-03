@@ -22,5 +22,5 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 
-*.png
-./pictures/*.png
+## *.png
+## ./pictures/*.png
