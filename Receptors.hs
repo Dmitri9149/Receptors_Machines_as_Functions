@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-}
 module Receptors where
 
 
@@ -59,7 +61,7 @@ int_to_types 1 = "Bool"
 int_to_types 2 = "Int"
 int_to_types 3 = "Char"
 int_to_types 4 = "String"
-int_to_types _ = undefined 
+int_to_types _ = undefined
 
 -- from Source to Sink 
 -- the length (mass) of the list is to be >= 1
@@ -104,7 +106,7 @@ data Receptors = Receptor { ud :: Spin_UD,
 -- particles of mass 0 (values, or 'generalised photons') between particles of mass > 0 which are 
 -- functions 
 mass :: Receptors  -> Int
-mass p = (length $ sss p) -1 
+mass p = length (sss p) -1
 
 val1 :: Receptors
 val1 = Receptor {ud = Up, st = 3, sss = [(1,3),(2,3),(3,3)]}
@@ -136,7 +138,7 @@ lawsOfUniverse_1 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
   (tf_st >= 0) && (tv_st >= 0)
   &&
   -- ud spin of value is to be Down and ud spin of tf is to be Up
-  tv_ud == Down && tf_ud == Up 
+  tv_ud == Down && tf_ud == Up
   -- some other laws may be added 
 
 -- laws for interaction between particles of different 
@@ -148,10 +150,10 @@ lawsOfUniverse_2 :: Receptors -> Receptors -> Bool
 lawsOfUniverse_2 tv@Receptor{ud = tv_ud, st = tv_st, sss =tv_sss }
   tf@Receptor{ud = tf_ud, st = tf_st, sss = tf_sss } =
 -- spin of tv is Up , tf is Down 
-  tv_ud == Up && tf_ud == Down 
+  tv_ud == Up && tf_ud == Down
   &&
 -- particles are to be in the same positions 
-  tv_st == tf_st 
+  tv_st == tf_st
   &&
 -- masses 
   (mass tv == 0) && (mass tf == 1)
