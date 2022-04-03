@@ -101,7 +101,7 @@ data Receptors = Receptor { ud :: Spin_UD,
 -- remind as we take the final result a value from stack of lenght 1 
 -- the mass of functions is >= 0
 -- so we use the eager evaluation; the interaction is transmitted by 
--- particles of mass 0 (values) between particles of mass >= 0 which are 
+-- particles of mass 0 (values, or 'generalised photons') between particles of mass > 0 which are 
 -- functions 
 mass :: Receptors  -> Int
 mass p = (length $ sss p) -1 
