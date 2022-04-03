@@ -1,7 +1,5 @@
-{-# LANGUAGE ScopedTypeVariables #-}
 module Receptors where
-import Control.Arrow
-import Data.Aeson (Value(Bool))
+
 
 --  we will make calculation with 'clerer indexing' 
 -- of course if we rely on indexing 'we do not understand something ...' 
