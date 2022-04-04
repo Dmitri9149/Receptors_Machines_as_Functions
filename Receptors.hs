@@ -72,6 +72,11 @@ int_to_types _ = undefined
 -- which will be substituted into the function 
 -- the snd elt in the pair correspont to the Type of data 
 -- here it is represented by Int number 
+-- by coordinate we mean that the values and functions will be collected 
+-- to bundles (lists) for session types evaluation 
+-- the coordinate is position in the list and there will be 
+-- send / receive configuration , so at every step there will be 
+-- possibility for evaluation 
 type Spin_SS = (Int,Int)
 
 
