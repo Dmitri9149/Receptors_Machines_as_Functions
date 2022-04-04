@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-}
 module Configuration_1 where
 -- import Receptors 
 -- try to get an intuition with working with more and more complex 
@@ -55,7 +57,7 @@ type Spin_FT = (Int, Int)
 -- PXT from coordinate : P and X from coordinate and impulse and T from tensor 
 type Spin_PXT = (Int,Int)
 
-data Receptors_1 = Receptor_1 { pxt :: [Spin_PXT] } deriving Show
+data Receptors_1 = Receptor_1 { pxt :: [Spin_PXT] } | Nth deriving ( Show , Eq )
 
 val1 :: Receptors_1
 val1 = Receptor_1 { pxt = [(1,10), (2,10), (3,10),(4,10),(25,2)]}
@@ -74,6 +76,7 @@ val5 = Receptor_1 { pxt = [(10,4)]}
 
 
 mass :: Receptors_1 -> Int
+mass Nth = - 1 
 mass p = length (pxt p) - 1
 
 lawsOfUniverse_1 :: Receptors_1 -> Receptors_1 -> Bool
@@ -96,15 +99,35 @@ lawsOfUniverse_1
 -- between interacting particles : the particles may interact : 
 -- it means function evaluation with the value 
 -- if not: the interaction will generate nothing 
-evaluate :: Receptors_1 -> Receptors_1 -> Maybe Receptors_1
+evaluate :: Receptors_1 -> Receptors_1 -> Receptors_1
 evaluate
   tv@ Receptor_1 { pxt = tv_pxt }
   tf@Receptor_1 {pxt = tf_pxt}
-  | lawsOfUniverse_1 tv tf = Just Receptor_1 {pxt = drop 1 tf_pxt }
-  | otherwise = Nothing
+  | lawsOfUniverse_1 tv tf = Receptor_1 {pxt = drop 1 tf_pxt }
+  | otherwise = Nth
+
+interaction_A :: [Receptors_1] -> [Receptors_1]
+interaction_A rss = evaluate
+  <$>
+  rss
+  <*>
+  rss
+
+interaction_B :: [Receptors_1] -> [Receptors_1]
+go_1 :: [Receptors_1] -> [Receptors_1] -> [Receptors_1]
+go_2 :: Receptors_1 -> [Receptors_1] -> [Receptors_1]
+
+interaction_B x = go_1 x []
+go_1 = undefined 
+go_2 = undefined 
+
+
 
 main :: IO ()
 main = do
   let res = evaluate val2 val1
-  putStrLn (show res)
+  print res
+  print ( interaction_A [val2, val1, val3, val4, val5] )
+  print ( interaction_B [val2, val1, val3, val4, val5] )
+  print $ mass Nth
 
