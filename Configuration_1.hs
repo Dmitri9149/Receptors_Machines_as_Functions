@@ -77,7 +77,7 @@ val5 = Receptor_1 { pxt = [(10,4)]}
 
 
 mass :: Receptors_1 -> Int
-mass Nth = - 1 
+mass Nth = - 1
 mass p = length (pxt p) - 1
 
 lawsOfUniverse_1 :: Receptors_1 -> Receptors_1 -> Bool
@@ -109,20 +109,27 @@ evaluate
 
 
 
-interaction_A :: [Receptors_1] -> [Receptors_1]
-interaction_A rss = evaluate
+interaction_A_go :: [Receptors_1] -> [Receptors_1]
+interaction_A_go rss = evaluate
   <$>
   rss
   <*>
   rss
 
-interaction_B :: [Receptors_1] -> [Receptors_1]
-go_1 :: [Receptors_1] -> [Receptors_1] -> [Receptors_1]
-go_2 :: Receptors_1 -> [Receptors_1] -> [Receptors_1]
+cleaner ::Eq a => a -> [a] -> [a]
+cleaner a = foldr (\x y -> if x == a then y else x:y) []
 
-interaction_B x = go_1 x []
-go_1 = undefined 
-go_2 = undefined 
+interaction_A :: [Receptors_1] -> [Receptors_1]
+interaction_A = cleaner Nth . interaction_A_go
+
+{-
+-- try to apply f :: (a-> a -> Maybe a) function to elts of the list
+-- if result is Nothing : keep the elt unchanged 
+-- if the first result is Just k -> change the elt to k and 
+-- return the tuple : [original list where only the one element is changed 
+first_hit :: a -> (a -> a-> Maybe a) -> [a] -> ([a],[a])
+first_hit x f aa = undefined 
+-}
 
 
 
@@ -130,7 +137,9 @@ main :: IO ()
 main = do
   let res = evaluate val2 val1
   print res
-  print ( interaction_A [val2, val1, val3, val4, val5] )
-  print ( interaction_B [val2, val1, val3, val4, val5] )
+  let step_1 = interaction_A [val2, val1, val3, val4, val5]
+  print step_1
+  let step_2 = interaction_A $ [val2, val3, val4, val5] ++ step_1
+  print step_2
   print $ mass Nth
 
