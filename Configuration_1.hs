@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
 module Configuration_1 where
+import Stack
 -- import Receptors 
 -- try to get an intuition with working with more and more complex 
 -- topological configurations 
@@ -105,6 +106,8 @@ evaluate
   tf@Receptor_1 {pxt = tf_pxt}
   | lawsOfUniverse_1 tv tf = Receptor_1 {pxt = drop 1 tf_pxt }
   | otherwise = Nth
+
+
 
 interaction_A :: [Receptors_1] -> [Receptors_1]
 interaction_A rss = evaluate
