@@ -19,11 +19,13 @@ type Promoters = [DNA_Alphabet]
 type DNA_Code = [DNA_Alphabet]
 type Genes = DNA_Code
 -- we are dealing not with a single genes , but with subsets of 
--- genes from Genome , Genome is actually the Map from promoters to 
+-- genes : DNA_Packages and  Genome is actually the map from promoters to 
 -- collection (here list) of genes 
 -- Genome is like main memory which has complex organization 
 type DNA_Packages = [DNA_Code]
-type Genome = DNA_Packages
+
+-- the function is to be injective !
+newtype Genome = Genome { from_enum_to_packages:: Promoters  -> DNA_Packages }
 
 -- RNA is like cache memory , intermediate memory 
 -- gene in DNA alphabet is transcribed firstly to RNA alphadet 
@@ -50,8 +52,12 @@ code_transformer_DNA_to_RNA :: DNA_Code -> RNA_Code
 code_transformer_DNA_to_RNA = map from_DNA_to_RNA
 
 
--- packege of RNA_Code
+-- package of RNA_Code
 type RNA_Package = [RNA_Code]
+
+-- this function transform from DNA_Packge to RNA_Package 
+package_transformer_DNA_RNA :: DNA_Packages -> RNA_Packages
+package_transformer_DNA_RNA = map code_transformer_DNA_to_RNA
 
 
 
@@ -75,8 +81,8 @@ data ProteinsAlphabet = A'' | C'' | D'' | E'' | F'' | G'' | H'' | I'' | K''
 type ProteinCode = [ProteinsAlphabet]
 
 -- there is function which transform from RNA code to Protein code 
-code_transformer_RNA_Protein :: RNA_Code -> ProteinCode 
-code_transformer_RNA_Protein = undefined 
+code_transformer_RNA_Protein :: RNA_Code -> ProteinCode
+code_transformer_RNA_Protein = undefined
 
 -- the proteins are folded to the final 3-D structure in Golgi apparatus
 -- this is like compilation and spawning  a program ( like runhaskell command)
@@ -88,4 +94,28 @@ code_transformer_RNA_Protein = undefined
 
 type ProteinMachines = [ProteinCode]
 type ProteinPackages = ProteinMachines
+
+-- this function transform from RNA_Packages to Protein_Packages (or ProteinMachines)
+
+package_transformer_RNA_Proteins :: RNA_Packages -> ProteinMachines
+package_transformer_RNA_Proteins = map code_transformer_RNA_Protein
+
+-- let us consider only one class of Protein machines : which are a values of Session Types 
+-- let us consider some enumerable state a and one to one function from a to Promoters
+-- the function must be injection !
+state_to_promoters :: a -> Promoters
+state_to_promoters = undefined
+
+-- in this case there is function from a to ProteinMachines
+our_genome :: Genome
+our_genome = undefined
+state_to_machines :: a -> ProteinMachines
+state_to_machines =
+  package_transformer_DNA_RNA
+  .
+  package_transformer_RNA_Proteins
+  .
+  from_enum_to_packages our_genome
+  .
+  state_to_promoters
 
