@@ -3,6 +3,8 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 import Control.Arrow
 import Data.Functor.Contravariant
+import Agda.Interaction.CommandLine (interaction)
+import Main (state_to_promoters)
 {-# HLINT ignore "Use camelCase" #-}
 -- import Data.Map as Map
 
@@ -104,9 +106,12 @@ package_transformer_RNA_Proteins rna = ProteinMachines {fromCode = map code_tran
 
 -- let us consider only one class of Protein machines : which are a values of Session Types 
 -- let us consider some enumerable state a and one to one function from a to Promoters
--- the function must be injection !
-state_to_promoters :: a -> Promoters
-state_to_promoters = undefined
+-- the function must be bijection !
+states_to_promoters :: a -> Promoters
+states_to_promoters = undefined
+
+promoters_to_states :: Promoters -> a 
+promoters_to_states = undefined 
 
 -- in this case there is function from a to ProteinMachines
 our_Genome :: Genome
@@ -147,8 +152,13 @@ machines_to_state = undefined
 -- the implementation will be done in separate module in future 
 -- insimplest form : interaction between (protein machine i ) and (protein machine j ) 
 -- is given just by function : interaction :: (a , a) -> (a , a) 
-interaction_1 :: (a,a) -> (a,a)
-interaction_1 = undefined 
+pair_to_pair :: (a,a) -> (a,a)
+pair_to_pair = undefined
+
+pair_to_promoters :: (a,a) -> (Promoters,Promoters)
+pair_to_promoters = (state_to_promoters, state_to_promoters) >>> pair_to_pair 
+
+
 
 -- we can forget abou the DNA , RNA and the code and think about a new type 
 -- ProteinMacnines' which is just 
@@ -161,14 +171,16 @@ instance Contravariant ProteinMachines' where
 -- we can easily lift the interaction_1 to ProteinMachines and to ProteinMachines'
 
 interaction_11 :: (a,a) -> ((a,a) -> (a,a)) -> (a -> ProteinMachines) -> (ProteinMachines, ProteinMachines)
-interaction_11 (m1,m2) interact state_to_machines = 
-  let (res1, res2) = interact (m1,m2) in (state_to_machines res1, state_to_machines res2)
+interaction_11 (m1,m2) interaction state_to_machines = 
+  let (res1, res2) = interaction (m1,m2) in (state_to_machines res1, state_to_machines res2)
 
 -- if we remind about 'biology' about Promoters , DAN and RNA code there are much more steps 
 -- the first step is interacting machines will generate not immediatelly the 
 -- next pair machines but the pair (prom1 :: Promoters , prom2 :: Promoters) 
 
 
--- continuation_in_promoters :: (ProteinMachines, ProteinMachines) -> (Promoters, Promoters)
+continuation_in_promoters :: 
+  (a,a) -> ((a,a) -> (a,a)) -> ProteinMachines' a -> (Promoters, Promoters)
+continuation_in_promoters :: (a1,a2) 
 
 
