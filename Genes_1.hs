@@ -107,15 +107,28 @@ state_to_promoters :: a -> Promoters
 state_to_promoters = undefined
 
 -- in this case there is function from a to ProteinMachines
-our_genome :: Genome
-our_genome = undefined
+our_Genome :: Genome
+our_Genome = undefined
+
 state_to_machines :: a -> ProteinMachines
 state_to_machines =
   package_transformer_DNA_RNA
   .
   package_transformer_RNA_Proteins
   .
-  from_enum_to_packages our_genome
+  from_enum_to_packages our_Genome
   .
   state_to_promoters
+
+state_to_machines1 :: a -> ProteinMachines
+state_to_machines1 = 
+  package_transformer_DNA_RNA
+  (flip .)
+  package_transformer_RNA_Proteins
+  (flip .)
+  from_enum_to_packages our_Genome
+  (flip .)
+  state_to_promoters
+
+
 
