@@ -3,8 +3,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 import Control.Arrow
 import Data.Functor.Contravariant
-import Agda.Interaction.CommandLine (interaction)
-import Main (state_to_promoters)
+
 {-# HLINT ignore "Use camelCase" #-}
 -- import Data.Map as Map
 
@@ -125,13 +124,13 @@ state_to_machines =
   .
   from_enum_to_packages our_Genome
   .
-  state_to_promoters
+  states_to_promoters
 
 
 -- if we write from left to right :  from state a to the promoters to the ... ProteinsPackages 
 state_to_machines' :: a -> ProteinMachines
 state_to_machines' = 
-  state_to_promoters 
+  states_to_promoters 
   >>> 
   from_enum_to_packages our_Genome
   >>>
@@ -156,7 +155,7 @@ pair_to_pair :: (a,a) -> (a,a)
 pair_to_pair = undefined
 
 pair_to_promoters :: (a,a) -> (Promoters,Promoters)
-pair_to_promoters = (state_to_promoters, state_to_promoters) >>> pair_to_pair 
+pair_to_promoters = undefined  
 
 
 
@@ -181,6 +180,6 @@ interaction_11 (m1,m2) interaction state_to_machines =
 
 continuation_in_promoters :: 
   (a,a) -> ((a,a) -> (a,a)) -> ProteinMachines' a -> (Promoters, Promoters)
-continuation_in_promoters :: (a1,a2) 
+continuation_in_promoters = undefined 
 
 
