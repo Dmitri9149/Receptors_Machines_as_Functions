@@ -2,6 +2,17 @@
 {-# HLINT ignore "Use camelCase" #-}
 module Receptors where
 
+-- thise are 'draft' thoughts , computationally the 'particle 
+-- physics below' and spins are low level computations with 
+-- registers : many simple registers -> complex connections 
+-- between registers 
+-- 'spins' are digit like structures which target the evaluations 
+-- in the 'gas' of molecules ('receptors' or registers) 
+-- such indexes have to arise from a DSL language 
+--(not yet known) : but see my experiments with 
+-- 2-Dimentional Lambda calculus in Two_D_Lambda.hs 
+-- (simple examples of values of Session Types)
+
 -- we will do 'particle physics' below 
 -- we will make calculation with 'clever indexing' 
 -- I name the indexes as spins as in quantum fields theory   
