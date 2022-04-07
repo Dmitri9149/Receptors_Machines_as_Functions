@@ -11,5 +11,51 @@ module Interaction where
 interact :: a -> Maybe a
 interact = undefined 
 
-evolution :: (a -> Maybe a) -> [a] -> [a]
-evolution = undefined 
+one_elem_with_list_helper:: a -> (a -> a -> Maybe a) -> [a] -> [a] -> ([a], [a])
+one_elem_with_list_helper x interact lst acc = 
+  case lst of 
+    [] -> ([x], acc)
+    y:[] -> case interact x y of 
+      Nothing -> ([x], y : acc)
+      Just z -> ([], [z])
+    y:r:xs -> case interact x y of 
+      Just k -> ([] , reverse xs ++ k:r:acc)
+      Nothing -> one_elem_with_list_helper x interact (r:xs) (y:acc)
+
+one_elem_with_list :: a -> (a -> a -> Maybe a) -> [a] -> ([a], [a])
+one_elem_with_list x interact lst = one_elem_with_list_helper x interact lst []
+
+-- example 
+interact_Ord :: Int -> Int -> Maybe Int 
+interact_Ord x y = if x < y then Just $ x + y else Nothing 
+
+ex1 :: ([Int], [Int])
+ex1 = one_elem_with_list 2 interact_Ord [-5, -6, 7 , -8, -10, 100]
+
+ex2 :: ([Int], [Int])
+ex2 = one_elem_with_list 2 interact_Ord [-5, -6, - 7 , -8, -10, -100, 0,1]
+
+{-
+evolution_helper :: (a -> Maybe a) -> [a] -> [a] -> [a]
+evolution_helper interact lst acc = case lst of 
+  [] -> acc
+  x:[] -> x:acc
+  x:y:[] -> case interact x y of 
+    Nothing -> x:y:acc
+    Just z -> z:acc
+  x:y:xs -> 
+-}
+
+
+main :: IO () 
+main = do 
+  let res = ex2 
+  print res
+
+-- ex1 -> output : ([],[100,-10,9,-8,-6,-5])
+-- ex2 -> output : ([2],[1,0,-100,-10,-8,-7,-6,-5])
+
+
+
+
+
