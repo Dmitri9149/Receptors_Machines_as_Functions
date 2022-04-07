@@ -19,8 +19,8 @@ one_elem_with_list_helper x interact lst acc =
   case lst of
     [] -> ([x], reverse acc)
     [y] -> case interact x y of
-     Nothing -> ([x], reverse (y : acc))
-     Just z -> ([], [z])
+     Nothing -> ([x], reverse $ y : acc)
+     Just z -> ([], reverse $ z:acc)
     y:xs -> case interact x y of
 --      Just k -> ([] , reverse xs ++ k:r:acc)
       Just k -> ([] , reverse $ reverse xs ++ [k] ++ acc)
@@ -64,12 +64,13 @@ ex4 = evolution interact_Ord  [ -6, -11, - 7 , -8, -10, -100, 30, 1, 8]
 ex5 :: ([Int], [Int])
 ex5 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 , -8, -10, 100] []
 
-
+ex6 :: ([Int], [Int])
+ex6 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 ] []
 
 
 main :: IO ()
 main = do
-  let res = ex4
+  let res = ex6
   print res
 
 -- ex1 -> output : ([],[100,-10,9,-8,-6,-5])
