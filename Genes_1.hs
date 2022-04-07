@@ -3,6 +3,8 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 import Control.Arrow ( (>>>) )
 import Data.Functor.Contravariant ( Contravariant(contramap) )
+import Control.Monad.Trans.State
+import qualified Control.Monad.Identity as Data.Functor.Identity
 
 {-# HLINT ignore "Use camelCase" #-} 
 
@@ -213,9 +215,36 @@ interaction_11 (m1,m2) interaction state_to_machines =
 -- the first step is interacting machines will generate not immediatelly the 
 -- next pair machines but the pair (prom1 :: Promoters , prom2 :: Promoters) 
 
+-- Let us assume there is function from Promoters to our type a 
+from_promoter_to_state :: Promoters -> a 
+from_promoter_to_state = undefined 
 
-continuation_in_promoters :: 
-  (a,a) -> ((a,a) -> (a,a)) -> ProteinMachines' a -> (Promoters, Promoters)
-continuation_in_promoters = undefined 
+-- because Promoters and Protein Machines are in one to one correspondence 
+-- we can think about states as just Protein machines 
+
+from_code  :: (Promoters,Promoters) -> ((ProteinMachines,ProteinMachines), (Promoters,Promoters)) 
+from_code = undefined 
+
+code_to_machine :: State (Promoters,Promoters) (ProteinMachines,ProteinMachines)
+code_to_machine  = state from_code
+
+machine_interaction :: (ProteinMachines,ProteinMachines) -> 
+  ((Promoters,Promoters) -> ((ProteinMachines,ProteinMachines), (Promoters,Promoters))) 
+machine_interaction = undefined 
+
+monadic_interaction :: (ProteinMachines,ProteinMachines) -> 
+  State (Promoters,Promoters) (ProteinMachines,ProteinMachines)
+monadic_interaction pair = state (machine_interaction pair) 
+
+res :: StateT
+  (Promoters, Promoters)
+  Data.Functor.Identity.Identity
+  (ProteinMachines, ProteinMachines)
+res = code_to_machine >>= monadic_interaction 
+
+
+
+
+
 
 
