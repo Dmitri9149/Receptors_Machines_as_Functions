@@ -65,7 +65,7 @@ ex5 :: ([Int], [Int])
 ex5 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 , -8, -10, 100] []
 
 ex6 :: ([Int], [Int])
-ex6 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 ] []
+ex6 = one_elem_with_list_helper 2 interact_Ord [-5, 7, -6] []
 
 
 main :: IO ()
