@@ -10,9 +10,10 @@ module Interaction where
 -- evolution of the 'gas' : two particles are consumed and 
 -- one particle is produced 
 
-interact :: a -> Maybe a
+interact :: a -> a -> Maybe a
 interact = undefined
 
+-- helper function for one_elem_with_list function 
 one_elem_with_list_helper:: a -> (a -> a -> Maybe a) -> [a] -> [a] -> ([a], [a])
 one_elem_with_list_helper x interact lst acc =
   case lst of
@@ -21,7 +22,8 @@ one_elem_with_list_helper x interact lst acc =
      Nothing -> ([x], y : acc)
      Just z -> ([], [z])
     y:r:xs -> case interact x y of
-      Just k -> ([] , reverse xs ++ k:r:acc)
+--      Just k -> ([] , reverse xs ++ k:r:acc)
+      Just k -> ([] , reverse xs ++ acc ++ [r,k])
       Nothing -> one_elem_with_list_helper x interact (r:xs) (y:acc)
 
 one_elem_with_list :: a -> (a -> a -> Maybe a) -> [a] -> ([a], [a])
@@ -57,7 +59,7 @@ ex3 = evolution interact_Ord  [-5, -6, - 7 , -8, -10, -100, 0, 1]
 
 
 ex4 :: [Int]
-ex4 = evolution interact_Ord  [-11, -6, - 7 , -8, -10, -100, 0, 1]
+ex4 = evolution interact_Ord  [ -6, -11, - 7 , -8, -10, -100, 0, 1]
 
 
 
