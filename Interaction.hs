@@ -22,10 +22,15 @@ one_elem_with_list_helper x interact lst acc =
      Nothing -> ([x], reverse $ y : acc)
      Just z -> ([], reverse $ z:acc)
     y:xs -> case interact x y of
---      Just k -> ([] , reverse xs ++ k:r:acc)
       Just k -> ([] , reverse $ reverse xs ++ [k] ++ acc)
       Nothing -> one_elem_with_list_helper x interact xs (y:acc)
-
+-- take element xx of type a ; interacion function , list of type [a]
+-- find the first element in list which can interact with the xx 
+-- res = interact xx elt /= Nothing , change the elt to res at the element position 
+-- and return the result 
+-- return tuple : fst = one element list [xx] , snd = original lst with elt changed to 
+-- res (result of interaction) 
+-- if there was no interaction -> the original list lst is returned unchanged 
 one_elem_with_list :: a -> (a -> a -> Maybe a) -> [a] -> ([a], [a])
 one_elem_with_list x interact lst = one_elem_with_list_helper x interact lst []
 
@@ -67,10 +72,15 @@ ex5 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 , -8, -10, 100] []
 ex6 :: ([Int], [Int])
 ex6 = one_elem_with_list_helper 2 interact_Ord [-5, 7, -6] []
 
+ex7 :: [Int]
+ex7 = evolution interact_Ord  [ 32, -11, - 7 , -8, -10, -100, 30]
+
+ex8 :: [Int]
+ex8 = (evolution interact_Ord . reverse . evolution interact_Ord)  [ 32, -11, - 7 , -8, -10, -100, 30]
 
 main :: IO ()
 main = do
-  let res = ex6
+  let res = ex8
   print res
 
 -- ex1 -> output : ([],[100,-10,9,-8,-6,-5])
