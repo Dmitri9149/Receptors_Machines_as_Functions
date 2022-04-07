@@ -23,7 +23,7 @@ one_elem_with_list_helper x interact lst acc =
      Just z -> ([], [z])
     y:xs -> case interact x y of
 --      Just k -> ([] , reverse xs ++ k:r:acc)
-      Just k -> ([] , reverse xs ++ [k] ++ acc)
+      Just k -> ([] , reverse $ reverse xs ++ [k] ++ acc)
       Nothing -> one_elem_with_list_helper x interact xs (y:acc)
 
 one_elem_with_list :: a -> (a -> a -> Maybe a) -> [a] -> ([a], [a])
@@ -69,7 +69,7 @@ ex5 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 , -8, -10, 100] []
 
 main :: IO ()
 main = do
-  let res = ex5
+  let res = ex4
   print res
 
 -- ex1 -> output : ([],[100,-10,9,-8,-6,-5])
