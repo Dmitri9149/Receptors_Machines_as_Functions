@@ -134,31 +134,6 @@ package_transformer_RNA_Proteins :: RNA_Packages -> ProteinMachines
 package_transformer_RNA_Proteins rna = ProteinMachines {fromCode = map code_transformer_RNA_Protein rna }
 
 
--- As a very important examle we will consider Session types protein machines 
--- Our machines will implement values of this types 
--- Such machines reside on cell membrane and are used for intercellular communication : 
--- Similar to server / client pair in Computer science
--- Let us take some enumerable type 'a' for states and injective function from 'a' to Promoters
--- The idea is : we will model states and state transitions and every p from Promoters 
--- is a state : by making quiry with 'p' we will get the DNA and RNA code for 'p' and 
--- the Session type protein machine for the state 'p'
--- When two cells (agents)  in states p and q will interact it is actually the 
--- interaction between two protein machines 
--- THE IMPLEMENTATION OF INTERACTION AS SESSION TYPE INTERACTION BETWEEN THE TWO MACHINES 
--- WILL BE DONE IN SPECIAL FILE : NOW IT IS 'TO DO '
-
-states_to_promoters :: a -> Promoters
-states_to_promoters = undefined
-
-{-
--- if we model Promoters as list of aplhabet such function can not exist : 
--- biologically there the biggest part of strings in the alphabet are useless
--- only some strings make sence : like not every string in an alphabet is 
--- a word in a language
--- promoters_to_states :: Promoters -> a 
--- promoters_to_states = undefined 
--}
-
 -- we have a concrete Genome 
 our_Genome :: Genome
 our_Genome = undefined
@@ -186,15 +161,33 @@ state_to_machines' =
   >>>
   package_transformer_RNA_Proteins
 
+  -- As a very important examle we will consider Session types protein machines 
+-- Our machines will implement values of this types 
+-- Such machines reside on cell membrane and are used for intercellular communication : 
+-- Similar to server / client pair in Computer science
+-- Let us take some enumerable type 'a' for states and injective function from 'a' to Promoters
+-- The idea is : we will model states and state transitions and every p from Promoters 
+-- is a state : by making quiry with 'p' we will get the DNA and RNA code for 'p' and 
+-- the Session type protein machine for the state 'p'
+-- When two cells (agents)  in states p and q will interact it is actually the 
+-- interaction between two protein machines 
+-- THE IMPLEMENTATION OF INTERACTION AS SESSION TYPE INTERACTION BETWEEN THE TWO MACHINES 
+-- WILL BE DONE IN SPECIAL FILE : NOW IT IS 'TO DO '
+
+states_to_promoters :: a -> Promoters
+states_to_promoters = undefined
+
 -- let us consider the scenarion : we have agents which are in some state from some 
 -- Enumerable a ; for every i from a there is unique code which coding the 
--- unique protein machine i ; this machine is value of Sesion Type -> actually 
--- our state from a is in one to one relation to the protein machine i 
+-- unique protein machine i 
+-- this machine is value of Sesion Type 
 -- val of Session Type of agent i can interact with val of Session Type of agent j 
 -- the values (proteins machines) implement the interaction 
 -- the implementation will be done in separate module in future 
--- insimplest form : interaction between (protein machine i ) and (protein machine j ) 
+-- TODO this 
+-- in simplest form : interaction between (protein machine i ) and (protein machine j ) 
 -- is given just by function : interaction :: (a , a) -> (a , a) 
+
 pair_to_pair :: (a,a) -> (a,a)
 pair_to_pair = undefined
 
@@ -202,8 +195,7 @@ pair_to_promoters :: (a,a) -> (Promoters,Promoters)
 pair_to_promoters = undefined  
 
 
-
--- we can forget abou the DNA , RNA and the code and think about a new type 
+-- we can forget about the DNA , RNA and the code and think about a new type 
 -- ProteinMacnines' which is just 
 newtype ProteinMachines' a = ProteinMachines' { stateToMachines :: a -> ProteinMachines } 
 -- we see this is a Contravariant functor 
