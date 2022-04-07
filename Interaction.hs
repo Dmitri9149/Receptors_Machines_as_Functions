@@ -17,13 +17,13 @@ interact = undefined
 one_elem_with_list_helper:: a -> (a -> a -> Maybe a) -> [a] -> [a] -> ([a], [a])
 one_elem_with_list_helper x interact lst acc =
   case lst of
-    [] -> ([x], acc)
+    [] -> ([x], reverse acc)
     [y] -> case interact x y of
-     Nothing -> ([x], y : acc)
+     Nothing -> ([x], reverse (y : acc))
      Just z -> ([], [z])
     y:xs -> case interact x y of
 --      Just k -> ([] , reverse xs ++ k:r:acc)
-      Just k -> ([] , acc ++ [k] ++ reverse xs)
+      Just k -> ([] , reverse xs ++ [k] ++ acc)
       Nothing -> one_elem_with_list_helper x interact xs (y:acc)
 
 one_elem_with_list :: a -> (a -> a -> Maybe a) -> [a] -> ([a], [a])
@@ -48,7 +48,7 @@ evolution_helper interact lst acc = case lst of
     Nothing -> x:y:acc
     Just z -> z:acc
   x:y:xs -> case one_elem_with_list x interact (y:xs) of
-    ([], res1) -> reverse res1 ++ acc
+    ([], res1) -> reverse $ reverse res1 ++ acc
     (r,res2) -> evolution_helper interact res2 $ head r:acc
 
 evolution :: (a -> a -> Maybe a) -> [a] -> [a]
@@ -59,7 +59,7 @@ ex3 = evolution interact_Ord  [-5, -6, - 7 , -8, -10, -100, 0, 1]
 
 
 ex4 :: [Int]
-ex4 = evolution interact_Ord  [ -6, -11, - 7 , -8, -10, -100, 0, 1, 8]
+ex4 = evolution interact_Ord  [ -6, -11, - 7 , -8, -10, -100, 30, 1, 8]
 
 ex5 :: ([Int], [Int])
 ex5 = one_elem_with_list_helper 2 interact_Ord [-5, -6, 7 , -8, -10, 100] []
