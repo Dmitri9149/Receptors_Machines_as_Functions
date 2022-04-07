@@ -116,33 +116,53 @@ type ProteinCode = [ProteinsAlphabet]
 code_transformer_RNA_Protein :: RNA_Code -> ProteinCode
 code_transformer_RNA_Protein = undefined
 
--- the proteins are folded to the final 3-D structure in Golgi apparatus
--- this is like compilation and spawning  a program ( like runhaskell command)
+-- the proteins are folded to the final 3-D structure from amino asid strings  
+-- and delivered to their compartment of action by the Golgi apparatus which is special 
+-- fabric to make mature protein machines from their code.
+-- It is similat to spawning a process or starting a programm from compiled file. 
+-- Every protein machine has its own compartment of action : scope of the protein action.
 -- we use newtype to wrap the Protein string to reflects the folding / spawning
 -- and we reflect the fact the active unit is not a single protein 
---  but it is usually a list of proteins collected together to make a 'machine'
--- we will use mostly machines which work as values of Session Types 
+-- but it is usually a list of proteins collected together to make a 'machine'
+-- Now we will use mostly machines which work as values of Session Types
 
 newtype ProteinPackages = ProteinMachines {fromCode :: [ProteinCode]}
 type ProteinMachines = ProteinPackages
 
 -- this function transform from RNA_Packages to Protein_Packages (or ProteinMachines)
-
 package_transformer_RNA_Proteins :: RNA_Packages -> ProteinMachines
 package_transformer_RNA_Proteins rna = ProteinMachines {fromCode = map code_transformer_RNA_Protein rna }
 
--- let us consider only one class of Protein machines : which are a values of Session Types 
--- let us consider some enumerable state a and one to one function from a to Promoters
--- the function must be bijection !
+
+-- As a very important examle we will consider Session types protein machines 
+-- Our machines will implement values of this types 
+-- Such machines reside on cell membrane and are used for intercellular communication : 
+-- Similar to server / client pair in Computer science
+-- Let us take some enumerable type 'a' for states and injective function from 'a' to Promoters
+-- The idea is : we will model states and state transitions and every p from Promoters 
+-- is a state : by making quiry with 'p' we will get the DNA and RNA code for 'p' and 
+-- the Session type protein machine for the state 'p'
+-- When two cells (agents)  in states p and q will interact it is actually the 
+-- interaction between two protein machines 
+-- THE IMPLEMENTATION OF INTERACTION AS SESSION TYPE INTERACTION BETWEEN THE TWO MACHINES 
+-- WILL BE DONE IN SPECIAL FILE : NOW IT IS 'TO DO '
+
 states_to_promoters :: a -> Promoters
 states_to_promoters = undefined
 
-promoters_to_states :: Promoters -> a 
-promoters_to_states = undefined 
+{-
+-- if we model Promoters as list of aplhabet such function can not exist : 
+-- biologically there the biggest part of strings in the alphabet are useless
+-- only some strings make sence : like not every string in an alphabet is 
+-- a word in a language
+-- promoters_to_states :: Promoters -> a 
+-- promoters_to_states = undefined 
+-}
 
--- in this case there is function from a to ProteinMachines
+-- we have a concrete Genome 
 our_Genome :: Genome
 our_Genome = undefined
+
 
 state_to_machines :: a -> ProteinMachines
 state_to_machines =
@@ -165,10 +185,6 @@ state_to_machines' =
   package_transformer_DNA_RNA
   >>>
   package_transformer_RNA_Proteins
-
--- because all the maps were injections there is to be reverse function : 
-machines_to_state :: ProteinMachines -> a 
-machines_to_state = undefined 
 
 -- let us consider the scenarion : we have agents which are in some state from some 
 -- Enumerable a ; for every i from a there is unique code which coding the 
