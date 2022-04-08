@@ -2,6 +2,7 @@
 {-# HLINT ignore "Use camelCase" #-}
 module Genes_Example where 
 import Control.Arrow ( (>>>) )
+import Control.Monad.Trans.State ( state, State )
 
 -- see Genes_as_Code.hs for the general genes description 
 -- in many cases we are in need of more concrete description of 
@@ -104,7 +105,7 @@ from_Machines_to_Promoters = from_Machines_to_RNA >>> from_RNA_to_DNA >>> from_D
 
 -- promoters represent a state of cell (agent) 
 -- using a value of Promoter type  ('biologically' it is transcription factor ) we 
--- spawn the machine which represent the state functionality machine <-> promoter <-> state 
+-- spawn the machine which represent the state functionality: machines <-> promoters <-> states 
 
 -- we can use State (Promoters, Promoters) (Machines, Machines) to make some examples 
 -- in monadic style 
@@ -112,6 +113,71 @@ from_Machines_to_Promoters = from_Machines_to_RNA >>> from_RNA_to_DNA >>> from_D
 -- (Promoters, Promoters) -> (Promoters, Promoters) 
 -- if there is no interaction between a concrete pairs :  we have the identity 
 -- (no change in states) , or we will get a new changed pair of states 
+
+-- we are going to represent 'biologically' the system which we 
+-- can describe abstractly as mathematical function 
+-- where the abstact state of a cell (agent) is modeled as 
+-- 'promoter' 
+pairs_p_interaction :: (Promoters,Promoters) -> (Promoters,Promoters) 
+pairs_p_interaction = undefined 
+
+-- same for the Machines this is a mathematical function , 
+-- because we 'identify' state of cell, promoters, machines 
+-- machines here correspond to values of Session Types 
+pairs_m_interaction :: (Machines,Machines) -> (Machines,Machines) 
+pairs_m_interaction = undefined 
+
+-- this description is more 'biological' 
+-- newtype DNA_packages dna = DNA_packages { as_DNA :: dna  } 
+-- newtype RNA_packages rna = RNA_packages { as_RNA :: rna }
+-- newtype Machines m = Machines { as_Machines :: m}
+-- Prs from Promoters : intermediate type between Machines and DNA_code 
+-- dna , rna , m , p types are isomorphic to each other 
+-- newtype Prs p = Prs { as_Promoters :: p }
+
+-- and we can repeat mostly one to one 
+-- we combine everything to pairs because only the pairs determine 
+-- result of interaction : the next pairs 
+from_code'  :: (Promoters,Promoters) -> ((Machines,Machines), (Promoters,Promoters)) 
+from_code' = undefined
+
+code_to_machine' :: State (Promoters,Promoters) (Machines, Machines) 
+code_to_machine'  = state from_code' 
+
+-- the biological meaning : if we have pair (m1,m2) we can tranform it 
+-- to the pair (pr1, pr2) -> which mathematically correspond to 
+-- two promoters -> which correspond to the current state 
+-- the function of type (Promoters, Promoters) -> ((Machines,Machines), (Promoters,Promoters))
+-- corrspond to the interaction of two particles : from current pair (pr1,pr2) -> we can get 
+-- the next pair (next_pr1, next_pr2) of promoters, from which we can 'quiry' DNA data base 
+-- to get (next_m1,next_m2) 
+machine_interaction' :: (Machines,Machines) -> 
+  ((Promoters, Promoters) -> ((Machines,Machines), (Promoters,Promoters))) 
+machine_interaction' = undefined 
+
+monadic_interaction' :: (Machines,Machines) -> 
+  State (Promoters,Promoters) (Machines,Machines)
+monadic_interaction' pair = state (machine_interaction' pair)
+
+next_pair_1' :: State (Promoters, Promoters) (Machines,Machines)
+next_pair_1' = code_to_machine' >>= monadic_interaction' 
+
+next_pair' :: State (Promoters, Promoters) (Machines,Machines)
+next_pair' = do 
+-- get pair of machines
+  (x,y) <- code_to_machine' 
+-- use the pair of machines to get next_pair of promoters and machines 
+-- the actual biological flow is: 
+----------------------
+-- (m1, m2) => then within the interaction generate => (next_pr1, next_pr2) => 
+-- then produce from DNA data base => (next_m1, next_m2) => 
+-- then within the interaction generate => (next_next_pr1, next_next_pr2) => 
+-- then produce from DNA data base => (next_next_m1, next_next_m2) => ....... 
+---------------------
+  monadic_interaction' (x,y)
+
+
+
 
 
 

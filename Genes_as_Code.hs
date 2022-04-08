@@ -3,7 +3,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 import Control.Arrow ( (>>>) )
 import Data.Functor.Contravariant ( Contravariant(contramap) )
-import Control.Monad.Trans.State
+import Control.Monad.Trans.State ( state, State )
 import qualified Control.Monad.Identity as Data.Functor.Identity
 
 {-# HLINT ignore "Use camelCase" #-} 
