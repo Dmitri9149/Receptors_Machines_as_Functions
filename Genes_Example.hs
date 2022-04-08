@@ -3,6 +3,7 @@
 module Genes_Example where
 import Control.Arrow ( (>>>) )
 import Control.Monad.Trans.State
+import qualified Data.Bifunctor as BiF
 
 -- see Genes_as_Code.hs for the general genes description 
 -- in many cases we are in need of more concrete description of 
@@ -20,16 +21,16 @@ import Control.Monad.Trans.State
 -- active building block of cells at the level we are making the cell description 
 -- as processes , several proteins are used ( protein roughly correspond to single gene)
 -- several values at every data type is enought to make some interesting examples 
-data DNA_Packages = DNA_package1 | DNA_package2 | DNA_package3 | DNA_package4 deriving Show 
+data DNA_Packages = DNA_package1 | DNA_package2 | DNA_package3 | DNA_package4 deriving Show
 
-data RNA_Packages = RNA_package1 | RNA_package2 | RNA_package3 | RNA_package4 deriving Show 
+data RNA_Packages = RNA_package1 | RNA_package2 | RNA_package3 | RNA_package4 deriving Show
 
 -- promoters are special DNA elements which are targeted by transcription factors 
 -- when the factor attachs to the element the transcription of corresponging 
 -- DNA package begins -> the it transforms to RNA package and then to 
 -- Proteins packege (Machine)
-data Promoters = PM1 | PM2 | PM3 | PM4 deriving Show 
-data Machines = Pt_machine1 | Pt_machine2 |Pt_machine3 | Pt_machine4 deriving Show 
+data Promoters = PM1 | PM2 | PM3 | PM4 deriving Show
+data Machines = Pt_machine1 | Pt_machine2 |Pt_machine3 | Pt_machine4 deriving Show
 
 -- by promoters we can make quiry to DNA (to invoke the DNA Code packages)
 -- this is 'real' biological function : by it we can quiry the DNA data base 
@@ -140,73 +141,61 @@ pairs_m_to_promoters (m1,m2) =
 -- dna , rna , m , p types are isomorphic to each other 
 -- newtype Prs p = Prs { as_Promoters :: p }
 
--- and we can repeat mostly one to one 
--- we combine everything to pairs because only the pairs determine 
--- result of interaction : the next pairs 
-from_code'  :: (Promoters,Promoters) -> ((Machines,Machines), (Promoters,Promoters))
-from_code' (pr1,pr2) =
-  ((from_Promoters_to_Machines pr1, from_Promoters_to_Machines pr2),(pr1,pr2))
+-- let us consider an example 
+-- biologycally within the interaction of the machines 
+-- which are now values of session types pairs of values of Promoter type are 
+-- firstly produced 
+interaction_machines_to_promoters :: (Machines, Machines) -> (Promoters,Promoters)
+interaction_machines_to_promoters (Pt_machine1,Pt_machine4) = (PM2,PM4)
+interaction_machines_to_promoters (Pt_machine2,Pt_machine4) = (PM3,PM4)
+interaction_machines_to_promoters (Pt_machine3,Pt_machine4) = (PM2,PM4)
+interaction_machines_to_promoters (Pt_machine4,Pt_machine1) = (PM4,PM2)
+interaction_machines_to_promoters (Pt_machine4,Pt_machine2) = (PM4,PM3)
+interaction_machines_to_promoters (Pt_machine4,Pt_machine3) = (PM4,PM1)
+interaction_machines_to_promoters (Pt_machine2,Pt_machine3) = (PM3,PM2)
+interaction_machines_to_promoters (Pt_machine3,Pt_machine2) = (PM2,PM3)
+interaction_machines_to_promoters (x,y) = (from_Machines_to_Promoters x, from_Machines_to_Promoters y)
 
-code_to_machine' :: State (Promoters,Promoters) (Machines, Machines)
-code_to_machine'  = state from_code'
-
--- the biological meaning : if we have pair (m1,m2) we can tranform it 
--- to the pair (pr1, pr2) -> which mathematically correspond to 
--- two promoters -> which correspond to the current state 
--- the function of type (Promoters, Promoters) -> ((Machines,Machines), (Promoters,Promoters))
--- corrspond to the interaction of two particles : from current pair (pr1,pr2) -> we can get 
--- the next pair (next_pr1, next_pr2) of promoters, from which we can 'quiry' DNA data base 
--- to get (next_m1,next_m2) 
--- see the pairs_m_to_promoters defined below 
-machine_interaction' :: (Machines,Machines) ->
-  ((Promoters, Promoters) -> ((Machines,Machines), (Promoters,Promoters)))
-machine_interaction' (m1,m2) (pr1, pr2) = let (next_pr1,next_pr2) = pairs_m_to_promoters' (m1,m2) in
-                            let (next_m1, next_m2) = (from_Promoters_to_Machines next_pr1, from_Promoters_to_Machines next_pr2) in
-                              ((next_m1,next_m2), (next_pr1,next_pr2))
-
-monadic_interaction' :: (Machines,Machines) ->
-  State (Promoters,Promoters) (Machines,Machines)
-monadic_interaction' pair = state (machine_interaction' pair)
-
-next_pair_1' :: State (Promoters, Promoters) (Machines,Machines)
-next_pair_1' = code_to_machine' >>= monadic_interaction'
-
-next_pair' :: State (Promoters, Promoters) (Machines,Machines)
-next_pair' = do
--- get pair of machines
-  (x,y) <- code_to_machine'
--- use the pair of machines to get next_pair of promoters and machines 
--- the actual biological flow is: 
-----------------------
--- (m1, m2) => then within the interaction generate => (next_pr1, next_pr2) => 
--- then produce from DNA data base => (next_m1, next_m2) => 
--- then within the interaction generate => (next_next_pr1, next_next_pr2) => 
--- then produce from DNA data base => (next_next_m1, next_next_m2) => ....... 
----------------------
-  (z,v) <- monadic_interaction' (x,y)
-  monadic_interaction' (z,v)
-
----let us make an example 
-pairs_m_interaction' :: (Machines,Machines) -> (Machines,Machines)
-pairs_m_interaction' (Pt_machine1,Pt_machine4) = (Pt_machine2,Pt_machine4)
-pairs_m_interaction' (Pt_machine2,Pt_machine4) = (Pt_machine3,Pt_machine4)
-pairs_m_interaction' (Pt_machine3,Pt_machine4) = (Pt_machine2,Pt_machine4)
-pairs_m_interaction' (Pt_machine4,Pt_machine1) = (Pt_machine4,Pt_machine2)
-pairs_m_interaction' (Pt_machine4,Pt_machine2) = (Pt_machine4,Pt_machine3)
-pairs_m_interaction' (Pt_machine4,Pt_machine3) = (Pt_machine4,Pt_machine1)
-
-pairs_m_interaction' (Pt_machine3,Pt_machine2) = (Pt_machine1,Pt_machine4)
-
-pairs_m_interaction' (x,y) = (x,y)
-
-pairs_m_to_promoters' :: (Machines,Machines) -> (Promoters,Promoters)
-pairs_m_to_promoters' (m1,m2) =
-  let (next_m1,next_m2) = pairs_m_interaction (m1,m2) in
-    (from_Machines_to_Promoters next_m1,from_Machines_to_Promoters next_m2)
+-- from the function , using the structural map from_Promoters_to_Machines 
+-- we can find how the pair of machines generate a new pair of machines 
+interaction_machines_to_machines :: (Machines, Machines) -> (Machines,Machines)
+interaction_machines_to_machines (x,y) =
+  BiF.bimap from_Promoters_to_Machines from_Promoters_to_Machines (interaction_machines_to_promoters (x,y))
 
 main :: IO ()
 main = do
-  print $ evalState next_pair' (PM1,PM4)
+  print
+  $
+  (interaction_machines_to_machines
+  .
+  interaction_machines_to_machines
+  .
+  interaction_machines_to_machines
+  .
+  interaction_machines_to_machines
+  .
+  interaction_machines_to_machines
+  .
+  interaction_machines_to_machines
+  )
+  (Pt_machine4,Pt_machine1)
+
+
+
+
+-- so in real 'biological' situation when machines interact firstly the 
+-- values of type Promoters will 
+-- be produced (the name of the molecule is transcription factor)
+-- after that the transcription factors will 'query' the genes data base 
+-- x :: Promoters => then using the from_Promoters_to_DNA => then the DNA packege will be generated 
+-- => then the RNA package will be generated => then the Protein package will be generated => 
+-- then the x :: Machine value of type Machine will be generated 
+
+
+
+
+
+
 
 
 
