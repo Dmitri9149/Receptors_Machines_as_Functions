@@ -1,12 +1,11 @@
 -- one more trial to 'idiomatically' describe the Genes
 -- interplay between the code and processes ( machines) 
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-} 
 import Control.Arrow ( (>>>) )
 import Data.Functor.Contravariant ( Contravariant(contramap) )
 import Control.Monad.Trans.State ( state, State )
 import qualified Control.Monad.Identity as Data.Functor.Identity
-
-{-# HLINT ignore "Use camelCase" #-} 
 
 -- aplhabet of DNA 
 -- every gene is string in A, T, C, G (nucleotides) alphabet
