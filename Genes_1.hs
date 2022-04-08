@@ -207,9 +207,12 @@ instance Contravariant ProteinMachines' where
 
 -- we can easily lift the interaction_1 to ProteinMachines and to ProteinMachines'
 
-interaction_11 :: (a,a) -> ((a,a) -> (a,a)) -> (a -> ProteinMachines) -> (ProteinMachines, ProteinMachines)
+interaction_11 :: (a,a) -> ((a,a) -> (a,a)) -> (a -> ProteinMachines) 
+  -> (ProteinMachines, ProteinMachines)
+
 interaction_11 (m1,m2) interaction state_to_machines = 
-  let (res1, res2) = interaction (m1,m2) in (state_to_machines res1, state_to_machines res2)
+  let (res1, res2) = interaction (m1,m2) 
+  in (state_to_machines res1, state_to_machines res2)
 
 -- if we remind about 'biology' about Promoters , DAN and RNA code there are much more steps 
 -- the first step is interacting machines will generate not immediatelly the 
@@ -222,27 +225,92 @@ from_promoter_to_state = undefined
 -- because now Promoters and Protein Machines are in one to one correspondence 
 -- we can think about states as just Protein machines values or just as Promoters 
 -- below we use State monad to represent the interaction between two cells (agents)
+-- we will use the type alianses to shorten the long type names 
+
+type Pr = Promoters
+type Pt = ProteinMachines 
 
 
-from_code  :: (Promoters,Promoters) -> ((ProteinMachines,ProteinMachines), (Promoters,Promoters)) 
+from_code  :: (Pr,Pr) -> ((Pt,Pt), (Pr,Pr)) 
 from_code = undefined 
 
-code_to_machine :: State (Promoters,Promoters) (ProteinMachines,ProteinMachines)
+code_to_machine :: State (Pr,Pr) (Pt,Pt) 
 code_to_machine  = state from_code
 
-machine_interaction :: (ProteinMachines,ProteinMachines) -> 
-  ((Promoters,Promoters) -> ((ProteinMachines,ProteinMachines), (Promoters,Promoters))) 
+machine_interaction :: (Pt,Pt) -> ((Pr,Pr) -> ((Pt,Pt), (Pr,Pr))) 
 machine_interaction = undefined 
 
-monadic_interaction :: (ProteinMachines,ProteinMachines) -> 
-  State (Promoters,Promoters) (ProteinMachines,ProteinMachines)
+monadic_interaction :: (Pt,Pt) -> State (Pr,Pr) (Pt,Pt)
 monadic_interaction pair = state (machine_interaction pair) 
 
-res :: StateT
-  (Promoters, Promoters)
-  Data.Functor.Identity.Identity
-  (ProteinMachines, ProteinMachines)
-res = code_to_machine >>= monadic_interaction 
+-- res :: StateT
+--  (Pr, Pr)
+--  Data.Functor.Identity.Identity
+--  (Pt, Pt )
+next_pair_1 :: State (Pr, Pr) (Pt, Pt)
+next_pair_1 = code_to_machine >>= monadic_interaction 
+
+next_pair :: State (Pr, Pr) (Pt, Pt)
+next_pair = do 
+-- from the state which is determined by pair of Promoters : (pt1, pt2) we may get the 
+-- pair of Protein Machines : (pt1, pt2) 
+  (x,y) <- code_to_machine 
+-- the interaction between the two protein machines (which are values of Session Types) 
+-- we may get the next pair of Promoters : pr_next1, pr_next2 
+-- this pair determine the next pair of protein machines : (pt_next1, pt_next2)
+-- (pr1,pr2) => (pt1,pt2) -> (pr_next1,pr_next2) => (pt_next1,pt_next2) -> ........
+-- => correspond to production of Protein Machine from DNA Code 
+-- -> correspond to the interaction between two cells (agents)
+  monadic_interaction (x,y)
+
+----  Generalisation 
+-- we can generalise our description 
+-- actually all is very simple 
+-- we have some type dna (most probably enumerable) as DNA code representation 
+-- we have RNA code which we may get as applying Identity functor to the type dna
+-- of we just may think that we have another type rna which is isomorphic to dna
+-- there are isomorphisms dna -> rna and rna -> dna
+-- there is also type Protein Machines m isomorphic to dna and rna
+-- dna nd rna types represent the 'packeges' of genes which correspond to protein machines 
+
+newtype DNA_packages dna = DNA_packages { as_DNA :: dna  } 
+newtype RNA_packages rna = RNA_packages { as_RNA :: rna }
+newtype Machines m = Machines { as_Machines :: m}
+-- Prs from Promoters : intermediate type between Machines and DNA_code 
+-- dna , rna , m , p types are isomorphic to each other 
+newtype Prs p = Prs { as_Promoters :: p }
+
+-- and we can repeat mostly one to one 
+-- we combine everything to pairs because only the pairs determine 
+-- result of interaction : the next pairs 
+from_code'  :: (Prs p,Prs p) -> ((Machines m ,Machines m), (Prs p,Prs p )) 
+from_code' = undefined
+
+code_to_machine' :: State (Prs p,Prs p) (Machines m ,Machines m) 
+code_to_machine'  = state from_code' 
+
+machine_interaction' :: (Machines m,Machines m ) -> 
+  ((Prs p , Prs p) -> ((Machines m,Machines m), (Prs p,Prs p))) 
+machine_interaction' = undefined 
+
+monadic_interaction' :: (Machines m,Machines m) -> 
+  State (Prs p,Prs p) (Machines m,Machines m)
+monadic_interaction' pair = state (machine_interaction' pair)
+
+next_pair_1' :: State (Prs p, Prs p) (Machines m, Machines m)
+next_pair_1' = code_to_machine' >>= monadic_interaction' 
+
+next_pair' :: State (Prs p, Prs p) (Machines m, Machines m)
+next_pair' = do 
+  (x,y) <- code_to_machine' 
+  monadic_interaction' (x,y)
+
+
+
+
+
+
+
 
 
 
