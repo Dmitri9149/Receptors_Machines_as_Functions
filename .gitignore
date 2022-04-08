@@ -24,3 +24,5 @@ cabal.project.local~
 
 ## *.png
 ## ./pictures/*.png
+
+Genes.hs
