@@ -3,6 +3,7 @@
 module Genes_Example where 
 import Control.Arrow ( (>>>) )
 import Control.Monad.Trans.State ( state, State )
+import GHC.Exts (prefetchValue2#)
 
 -- see Genes_as_Code.hs for the general genes description 
 -- in many cases we are in need of more concrete description of 
@@ -127,6 +128,11 @@ pairs_p_interaction = undefined
 pairs_m_interaction :: (Machines,Machines) -> (Machines,Machines) 
 pairs_m_interaction = undefined 
 
+pairs_m_to_promoters :: (Machines,Machines) -> (Promoters,Promoters)
+pairs_m_to_promoters (m1,m2) = 
+  let (next_m1,next_m2) = pairs_m_interaction (m1,m2) in 
+    (from_Machines_to_Promoters next_m1,from_Machines_to_Promoters next_m2) 
+
 -- this description is more 'biological' 
 -- newtype DNA_packages dna = DNA_packages { as_DNA :: dna  } 
 -- newtype RNA_packages rna = RNA_packages { as_RNA :: rna }
@@ -175,6 +181,32 @@ next_pair' = do
 -- then produce from DNA data base => (next_next_m1, next_next_m2) => ....... 
 ---------------------
   monadic_interaction' (x,y)
+
+---let us make an example 
+pairs_m_interaction' :: (Machines,Machines) -> (Machines,Machines)
+pairs_m_interaction' (Pt_machine1,Pt_machine4) = (Pt_machine2,Pt_machine4)
+pairs_m_interaction' (Pt_machine2,Pt_machine4) = (Pt_machine3,Pt_machine4)
+pairs_m_interaction' (Pt_machine3,Pt_machine4) = (Pt_machine2,Pt_machine4)
+pairs_m_interaction' (Pt_machine4,Pt_machine1) = (Pt_machine4,Pt_machine2)
+pairs_m_interaction' (Pt_machine4,Pt_machine2) = (Pt_machine4,Pt_machine3)
+pairs_m_interaction' (Pt_machine4,Pt_machine3) = (Pt_machine4,Pt_machine1)
+
+pairs_m_interaction' (Pt_machine3,Pt_machine2) = (Pt_machine1,Pt_machine4)
+
+pairs_m_interaction' (x,y) = (x,y)
+
+from_code'  :: (Promoters,Promoters) -> ((Machines,Machines), (Promoters,Promoters)) 
+from_code' (pr1,pr2) = 
+  ((from_Promoters_to_Machines pr1, from_Promoters_to_Machines pr2),(pr1,pr2)
+
+machine_interaction' :: (Machines,Machines) -> 
+  ((Promoters, Promoters) -> ((Machines,Machines), (Promoters,Promoters))) 
+machine_interaction' (m1,m2) = 
+  \ pr1, pr2 -> let (next_pr1,next_pr2) = pairs_m_to_promoters (m1,m2) in 
+    let (next_m1, next_m2) = (from_Promoters_to_Machines next_p1, from_Promoters_to_Machines next_p2) in 
+      ((next_m1,next_m2), (next_p1,next_p2))
+
+
 
 
 
