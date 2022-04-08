@@ -219,8 +219,10 @@ interaction_11 (m1,m2) interaction state_to_machines =
 from_promoter_to_state :: Promoters -> a 
 from_promoter_to_state = undefined 
 
--- because Promoters and Protein Machines are in one to one correspondence 
--- we can think about states as just Protein machines 
+-- because now Promoters and Protein Machines are in one to one correspondence 
+-- we can think about states as just Protein machines values or just as Promoters 
+-- below we use State monad to represent the interaction between two cells (agents)
+
 
 from_code  :: (Promoters,Promoters) -> ((ProteinMachines,ProteinMachines), (Promoters,Promoters)) 
 from_code = undefined 
