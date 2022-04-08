@@ -102,6 +102,20 @@ from_Promoters_to_Machines = from_Promoters_to_DNA >>> from_DNA_to_RNA >>> from_
 from_Machines_to_Promoters :: Machines -> Promoters 
 from_Machines_to_Promoters = from_Machines_to_RNA >>> from_RNA_to_DNA >>> from_DNA_to_Promoters
 
+-- promoters represent a state of cell (agent) 
+-- using a value of Promoter type  ('biologically' it is transcription factor ) we 
+-- spawn the machine which represent the state functionality machine <-> promoter <-> state 
+
+-- we can use State (Promoters, Promoters) (Machines, Machines) to make some examples 
+-- in monadic style 
+-- we assume there is a function which describe the cells interaction : 
+-- (Promoters, Promoters) -> (Promoters, Promoters) 
+-- if there is no interaction between a concrete pairs :  we have the identity 
+-- (no change in states) , or we will get a new changed pair of states 
+
+
+
+
 
 
 
