@@ -145,7 +145,7 @@ type ProteinMachines = ProteinPackages
 
 -- this function transform from RNA_Packages to Protein_Packages (or ProteinMachines)
 package_transformer_RNA_Proteins :: RNA_Packages -> ProteinMachines
-package_transformer_RNA_Proteins rna = ProteinMachines {fromCode = map code_transformer_RNA_Protein rna }
+package_transformer_RNA_Proteins rna = ProteinPackages {fromCode = map code_transformer_RNA_Protein rna }
 
 
 -- we have a concrete Genome 
