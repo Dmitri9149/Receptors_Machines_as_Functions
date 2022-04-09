@@ -29,6 +29,7 @@ data RNA_Packages = RNA_package1 | RNA_package2 | RNA_package3 | RNA_package4 de
 -- when the factor attachs to the element the transcription of corresponging 
 -- DNA package begins -> the it transforms to RNA package and then to 
 -- Proteins packege (Machine)
+
 data Promoters = PM1 | PM2 | PM3 | PM4 deriving Show
 data Machines = Pt_machine1 | Pt_machine2 |Pt_machine3 | Pt_machine4 deriving Show
 
