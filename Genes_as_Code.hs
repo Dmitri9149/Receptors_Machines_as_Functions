@@ -127,7 +127,20 @@ code_transformer_RNA_Protein = undefined
 -- but it is usually a list of proteins collected together to make a 'machine'
 -- Now we will use mostly machines which work as values of Session Types
 
-newtype ProteinPackages = ProteinMachines {fromCode :: [ProteinCode]}
+newtype ProteinPackages = ProteinPackages {fromCode :: [ProteinCode]}
+-- for simplicity we are making the ProteinMachines type as a sinonim of 
+-- ProteinsPackage 
+-- but there is difference between the lists of ProteinCode and the machines 
+-- protein_string :: ProteinCode is firstly folded (it is biological term) to 
+-- 3-D structure and then the folded proteins are collected into the 
+-- tensor ( or list) of the 3-D folded proteins =>  machine :: ProteinMachines 
+-- so it is ppossible to add one more data type : 
+-- newtype FoldedPackages = FoldedPackages { fromPackage :: [ProteinCode]}
+-- and only then make the synonim :
+-- type ProteinMachines = FoldedPackages 
+-- we can skip the stage because the unfolded protein strings are short living : 
+-- just after the translarion from RNA code the string ( it is also a code) are 
+-- folded ro 3-D structures and collected to the mature protein machines 
 type ProteinMachines = ProteinPackages
 
 -- this function transform from RNA_Packages to Protein_Packages (or ProteinMachines)
