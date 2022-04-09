@@ -25,10 +25,37 @@ data DNA_Packages = DNA_package1 | DNA_package2 | DNA_package3 | DNA_package4 de
 
 data RNA_Packages = RNA_package1 | RNA_package2 | RNA_package3 | RNA_package4 deriving Show
 
--- promoters are special DNA elements which are targeted by transcription factors 
--- when the factor attachs to the element the transcription of corresponging 
--- DNA package begins -> the it transforms to RNA package and then to 
--- Proteins packege (Machine)
+-- we also add the data "Protein_Packages" : biologically these are the lists of strings in 
+-- alphabet of amino acids 
+-- ## see Genes_as_Code.hs 
+-- for more details 
+-- if DNA is main memory and works actually as "block chain" (but it is more then list , it is tree)
+-- it keeps records about the very agents and is present at the nucleus of every cell
+-- if RNA is like a cache memory , or compiled code : the only currently needed code is compiled 
+-- from DNA and stored at endoplasmic reticulum of Goldgi apparatus 
+-- the protein strings listed in a protein package are not stored for a long time but 
+-- are immediatelly transformed to 3-D mature proteins , which are immediatelly collected in 
+-- together in a protein machine : the mature process (protein machine) is spawned from the 
+-- protein packages (list of strings) just the package is translater from the cache : RNA package
+-- so DNA -> long term / main memory (it is code)
+--    RNA -> cache memory (it is code)
+--    Protein strings -> short term memory (it is still code)
+--    Protein Machines : 3-D folded (here folded is used biologically,
+--    to reflect 3-D structure formation) proteins which are additionally collected to higher 
+--    level structure ( something like 'tensors' of 3-D proteins , or list of 3-D folded proteins)
+
+-- promoters are the elements in DNA alphabet which are 'tighting the knot'
+-- these are DNA elements (strings is DNA alphabet, like genes) and interact 
+-- with Protein Machines : at this point Code interact with Spawned Processes
+-- it makes possible the loop : read from Code -> Spawn Process -> the process 
+-- query the Code data base 
+-- (by using the Promoters -> DNA_Packages function ) -> reads new code -> 
+-- Spawn Process -> ... 
+-- Promoters are special DNA elements which are targeted by transcription factors: 
+-- which are proteins machines in our classification 
+-- when the factor attachs to the promoter element the transcription of corresponging 
+-- DNA package begins -> then it transforms to RNA package and then to 
+-- Proteins package (Machine)
 
 data Promoters = PM1 | PM2 | PM3 | PM4 deriving Show
 data Machines = Pt_machine1 | Pt_machine2 |Pt_machine3 | Pt_machine4 deriving Show
