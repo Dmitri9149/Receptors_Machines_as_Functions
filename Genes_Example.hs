@@ -43,6 +43,7 @@ data RNA_Packages = RNA_package1 | RNA_package2 | RNA_package3 | RNA_package4 de
 --    Protein Machines : 3-D folded (here folded is used biologically,
 --    to reflect 3-D structure formation) proteins which are additionally collected to higher 
 --    level structure ( something like 'tensors' of 3-D proteins , or list of 3-D folded proteins)
+data Protein_Packages = Pt_package1 | Pt_package2 | Pt_package3 | Pt_package4 deriving Show
 
 -- promoters are the elements in DNA alphabet which are 'tighting the knot'
 -- these are DNA elements (strings is DNA alphabet, like genes) and interact 
@@ -54,8 +55,8 @@ data RNA_Packages = RNA_package1 | RNA_package2 | RNA_package3 | RNA_package4 de
 -- Promoters are special DNA elements which are targeted by transcription factors: 
 -- which are proteins machines in our classification 
 -- when the factor attachs to the promoter element the transcription of corresponging 
--- DNA package begins -> then it transforms to RNA package and then to 
--- Proteins package (Machine)
+-- DNA package begins -> then it transforms to RNA package -> then to 
+-- Proteins package -> then spawn the protein machines 
 
 data Promoters = PM1 | PM2 | PM3 | PM4 deriving Show
 data Machines = Pt_machine1 | Pt_machine2 |Pt_machine3 | Pt_machine4 deriving Show
@@ -103,19 +104,34 @@ from_RNA_to_DNA rna = case rna of
 -- Protein Machines (Protein Packages),  are produced / spawned from packages of RNA molecules 
 -- in Goldgi apparatue . This apparatus is also responsible for delivery of the machines to 
 -- theis compartment of action (machines are exported to their name spaces)
-from_RNA_to_Machines :: RNA_Packages -> Machines
-from_RNA_to_Machines rna = case rna of
-  RNA_package1 -> Pt_machine1
-  RNA_package2 -> Pt_machine2
-  RNA_package3 -> Pt_machine3
-  RNA_package4 -> Pt_machine4
+from_RNA_to_Protein_Packages :: RNA_Packages -> Protein_Packages 
+from_RNA_to_Protein_Packages rna = case rna of 
+  RNA_package1 -> Pt_package1
+  RNA_package2 -> Pt_package2
+  RNA_package3 -> Pt_package3
+  RNA_package4 -> Pt_package4
+
+from_Protein_Packages_to_RNA :: Protein_Packages -> RNA_Packages
+from_Protein_Packages_to_RNA pck = case pck of 
+  Pt_package1 -> RNA_package1
+  Pt_package2 -> RNA_package2
+  Pt_package3 -> RNA_package3
+  Pt_package4 -> RNA_package4
+
+from_Protein_Packages_to_Machines :: Protein_Packages -> Machines
+from_Protein_Packages_to_Machines pck = case pck of
+  Pt_package1 -> Pt_machine1
+  Pt_package2 -> Pt_machine2
+  Pt_package3 -> Pt_machine3
+  Pt_package4 -> Pt_machine4
+
 -- this is just mathematical function 
-from_Machines_to_RNA :: Machines -> RNA_Packages
-from_Machines_to_RNA m = case m of
-  Pt_machine1 -> RNA_package1
-  Pt_machine2 -> RNA_package2
-  Pt_machine3 -> RNA_package3
-  Pt_machine4 -> RNA_package4
+from_Machines_to_Protein_Packages :: Machines -> Protein_Packages
+from_Machines_to_Protein_Packages m = case m of
+  Pt_machine1 -> Pt_package1
+  Pt_machine2 -> Pt_package2
+  Pt_machine3 -> Pt_package3
+  Pt_machine4 -> Pt_package4
 
 -- this is 'real biological' function, but from Proteins to Machines there are 
 -- three separate stages (this fucntion is factored to three steps)
@@ -124,13 +140,27 @@ from_Machines_to_RNA m = case m of
 -- third step : happens in Golgi apparatus and is finished as export to the compartment 
 -- of the machine action 
 from_Promoters_to_Machines :: Promoters -> Machines
-from_Promoters_to_Machines = from_Promoters_to_DNA >>> from_DNA_to_RNA >>> from_RNA_to_Machines
+from_Promoters_to_Machines = 
+  from_Promoters_to_DNA 
+  >>>
+  from_DNA_to_RNA 
+  >>>
+  from_RNA_to_Protein_Packages 
+  >>>
+  from_Protein_Packages_to_Machines
 
 -- this is just mathematical function : machines and promoters are in one to one 
 -- relation (at least at the model)
 -- if we know value of a machine we can determine the value of corresponding promoter 
 from_Machines_to_Promoters :: Machines -> Promoters
-from_Machines_to_Promoters = from_Machines_to_RNA >>> from_RNA_to_DNA >>> from_DNA_to_Promoters
+from_Machines_to_Promoters = 
+  from_Machines_to_Protein_Packages 
+  >>> 
+  from_Protein_Packages_to_RNA
+  >>>
+  from_RNA_to_DNA 
+  >>>
+  from_DNA_to_Promoters
 
 -- promoters represent a state of cell (agent) 
 -- using a value of Promoter type  ('biologically' it is transcription factor ) we 
@@ -176,7 +206,7 @@ pairs_m_to_promoters (m1,m2) =
 interaction_machines_to_promoters :: (Machines, Machines) -> (Promoters,Promoters)
 interaction_machines_to_promoters (Pt_machine1,Pt_machine4) = (PM2,PM4)
 interaction_machines_to_promoters (Pt_machine2,Pt_machine4) = (PM3,PM4)
-interaction_machines_to_promoters (Pt_machine3,Pt_machine4) = (PM2,PM4)
+interaction_machines_to_promoters (Pt_machine3,Pt_machine4) = (PM1,PM4)
 interaction_machines_to_promoters (Pt_machine4,Pt_machine1) = (PM4,PM2)
 interaction_machines_to_promoters (Pt_machine4,Pt_machine2) = (PM4,PM3)
 interaction_machines_to_promoters (Pt_machine4,Pt_machine3) = (PM4,PM1)
@@ -205,8 +235,10 @@ main = do
   interaction_machines_to_machines
   .
   interaction_machines_to_machines
+  .
+  interaction_machines_to_machines
   )
-  (Pt_machine4,Pt_machine1)
+  (Pt_machine2,Pt_machine4)
 
 
 
@@ -218,6 +250,8 @@ main = do
 -- x :: Promoters => then using the from_Promoters_to_DNA => then the DNA packege will be generated 
 -- => then the RNA package will be generated => then the Protein package will be generated => 
 -- then the x :: Machine value of type Machine will be generated 
+
+
 
 
 
