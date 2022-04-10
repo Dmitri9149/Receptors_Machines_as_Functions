@@ -1,5 +1,5 @@
 module Genome_Iso where 
-import Data.Types.Injective
+-- import Data.Types.Injective
 
 -- firstly read 
 -- ## Genes_as_Code.hs
@@ -38,4 +38,4 @@ newtype RNA_Code b = RNA_Code {from_RNA_Code :: b}
 
 -- we have to express there is isomorphism between the a and b types 
 
-instance (Iso a b, Iso b c) => Iso a c
+-- instance (Iso a b, Iso b c) => Iso a c

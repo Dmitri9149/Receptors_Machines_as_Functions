@@ -5,6 +5,8 @@ import Control.Arrow ( (>>>) )
 import Control.Monad.Trans.State
 import qualified Data.Bifunctor as BiF
 
+-- there are -draft thoughts' to develop an intuition 
+
 -- see Genes_as_Code.hs for the general genes description 
 -- in many cases we are in need of more concrete description of 
 -- DNA, RNA, genes, proteins , less abstruct and more 'human oriented' 

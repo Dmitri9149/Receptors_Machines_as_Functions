@@ -3,6 +3,8 @@
 module Genes where 
 import Data.Map as Map
 
+-- there are -draft thoughts' to develop an intuition 
+
 -- one of my attempts to make a right type system to 
 -- such things are DNA / Genes ; RNA / Proteins 
 

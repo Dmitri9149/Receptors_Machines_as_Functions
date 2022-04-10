@@ -2,6 +2,8 @@
 {-# HLINT ignore "Use camelCase" #-}
 module Configuration_1 where
 import Stack
+-- there are -draft thoughts' to develop an intuition 
+
 -- import Receptors 
 -- try to get an intuition with working with more and more complex 
 -- topological configurations 

@@ -1,3 +1,5 @@
+-- there are -draft thoughts' to develop an intuition 
+
 -- one more trial to 'idiomatically' describe the Genes
 -- interplay between the code and processes ( machines) 
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
