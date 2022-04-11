@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use newtype instead of data" #-}
 {-# HLINT ignore "Use camelCase" #-}
+{-# LANGUAGE DataKinds #-}
 module Genes_Block_Chain where
 import Data.Map as Map
 import Control.Lens
@@ -216,17 +217,10 @@ data Cache_Memory rna = Cache_Memory (Map.Map rna [(rna,[rna])])
 
 
 data Protein_Packages prot = Protein_Packages [prot] deriving (Show, Eq)
-type Protein_Machines prot = Protein_Packages prot 
+type Protein_Machines prot = Protein_Packages prot
 
--- TODO clarify the point 
--- translator ::  Lens (Genome DNA_Code) (Protein_Packages Protein_Code) DNA_Code Protein_Code
-{-
-translator ::  Lens' (Genome DNA_Code) (Protein_Packages Protein_Code) 
-translator = lens getter setter
-  where
-    getter genome :: (Genome DNA_Code) -> (Protein_Packages Protein_Code)
-    setter genome  prot_package :: (Genome DNA_Code) -> (Protein_Packages Protein_Code) -> (Genome DNA_Code
--}
+-- the function correspond to the 'biological translation' from 
+-- DNA blocks to protein machines 
 from_dna_block_to_machines :: Lens' (Maybe [DNA_Code]) (Protein_Packages Protein_Code)
 from_dna_block_to_machines = lens getter setter
   where
@@ -237,16 +231,23 @@ from_dna_block_to_machines = lens getter setter
       Protein_Packages [] -> Nothing
       Protein_Packages p_code -> Just $ Prelude.map from_Proteins_to_DNA p_code
 
+-- we are taking genome_ex1'' as concrete example of our genome 
+-- transform it to Map.map 
+-- focus attention at the DNA_code_p_1 dna regulatory element 
+-- make translation from the block to the protein machine using from_dna_block_to_machines
+-- function 
+-- there steps model the reaö biological operations which happens in bacterias 
 protein_block_ex1'' :: Protein_Packages Protein_Code
 protein_block_ex1'' = Map.fromList genome_ex1'' ^.at DNA_code_p_1 . from_dna_block_to_machines
 
-
-
+translator :: [(DNA_Code,[DNA_Code])] -> DNA_Code -> Protein_Packages Protein_Code
+translator genome dna_code = Map.fromList (genome) ^.at (dna_code) . from_dna_block_to_machines
 
 main :: IO ()
 main = do
   print genes_block1
   print genes_dna_block_2_ex''
   print protein_block_ex1''
+  print $ translator genome_ex1'' DNA_code_p_2
 
 
