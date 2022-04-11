@@ -92,6 +92,25 @@ data RNA_Code = RNA_code_p_1 | RNA_code_g_1 | RNA_code_g_4 | RNA_code_g_5 | RNA_
   RNA_code_x_1 | RNA_code_x_2 | RNA_code_x_3
   deriving (Show, Ord, Eq)
 
+-- this is real 'biological' transformation 
+-- the function reflects how code in DNA form (biologically it is string of des nucleotides, 
+-- but here we try to madel it just by strings in human understandable alphabet)
+-- is COMPILED to code in RNA form (biologically -> list of des rib nucleotides), 
+-- like   DNA_code_p_1 -> RNA_code_p_1
+-- moreover the transformation if from MAIN memory (DNA) to CACHE memory (RNA)
+-- DNA_code_p_1 --- 'p' means it is a promoter (regulatory) element , transcription 
+-- factors (which are ) the protein machines , may attach to such elements and 
+-- start transcription (or translation of blocks of genes , corresponding to the promoters)
+-- DNA_code_g_2 --- 'g' means it is a gene (code of some protein)
+-- DNA_code_x_2 --- this is quite speculative suggestion : we assume there are regulatory 
+-- elements in DNA string which wil be transformed to RNA regulatory elements and will 
+-- actually work as DNA promoters at RNA level 
+-- as you can see the DNA_code_x elements are not in use in 'simple backteria genome' 
+-- because there is no RNA (cache momory stage in backteria)
+------------------------------------------------------
+-- TODO try to identify such structure on biological level 
+-------------------------------------------------------
+
 from_DNA_to_RNA :: DNA_Code -> RNA_Code
 from_DNA_to_RNA dna = case dna of
   DNA_code_p_1 -> RNA_code_p_1
@@ -114,7 +133,7 @@ from_DNA_to_RNA dna = case dna of
 -- simple 'backterial' genome structure Genome''
 -- there are no RNA , there is no extra nesting as in more complex
 -- structure for Genome' 
--- in the 'backterial' Genome tructure protein machines will be 
+-- in the 'backterial' Genome structure protein machines will be 
 -- spawn directly from the [DNA_Code ] blocks -> i.e. directly from 
 -- main memory , there is no cache memory for RNA_code 
 -- and this is not 'biological' function , it is just mathematical 
@@ -127,8 +146,10 @@ genome_ex1'' = let dnaBlock1 = [ DNA_code_g_2 , DNA_code_g_9] in
 
 
 genes_dna_block_2_ex'' :: Maybe [DNA_Code]
-genes_dna_block_2_ex'' = Map.fromList genome_ex1''   ^.at   DNA_code_p_1
+genes_dna_block_2_ex'' = Map.fromList genome_ex1'' ^.at DNA_code_p_1
 
+data Cache_Memory'' rna = Cache_Memory'' [(rna,[rna])]
+data Cache_Memory rna = Cache_Memory (Map.Map rna [(rna,[rna])])
 
 
 
@@ -138,15 +159,4 @@ main = do
   print genes_block1
   print genes_dna_block_2_ex''
 
-
-{-}
-data Genes'' = Promoter1 | Promoter2 | Gene1 | Gene2 | Gene3 deriving (Eq,Ord)
-genome_ex :: Genome'' Genes''
-genome_ex = Genome'' [(Promoter1, [Gene1,Gene2]), (Promoter2,[Gene3])]
-genomeMap x = case x of
-  Genome'' z -> Map.fromList z
-genome_example1 = genomeMap genome_ex
-genes_example1 = 
-
--}
 
