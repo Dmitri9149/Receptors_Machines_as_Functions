@@ -92,6 +92,7 @@ data RNA_Code = RNA_code_p_1 | RNA_code_g_1 | RNA_code_g_4 | RNA_code_g_5 | RNA_
 data Protein_Code = Pr_code_g_1 | Pr_code_g_2 | Pr_code_g_3 | Pr_code_g_4 | Pr_code_g_5
   |
   Pr_code_g_6 | Pr_code_g_7 | Pr_code_g_8 | Pr_code_g_9 | Pr_code_g_10
+  deriving (Show, Ord, Eq)
 
 
 -- this is real 'biological' transformation 
@@ -145,19 +146,33 @@ from_DNA_to_RNA dna = case dna of
 -- this is where we tighten the knot ' -> it give us possibility to make 
 -- loops -> for example protein which invoke his own production from DNA_code 
 -- more about it later 
-from_DNA_to_Proteins :: DNA_Code -> Maybe Protein_Code
+from_DNA_to_Proteins :: DNA_Code -> Protein_Code
 from_DNA_to_Proteins dna = case dna of
-  DNA_code_g_1 -> Just Pr_code_g_1
-  DNA_code_g_2 -> Just Pr_code_g_2
-  DNA_code_g_3 -> Just Pr_code_g_3
-  DNA_code_g_4 -> Just Pr_code_g_4
-  DNA_code_g_5 -> Just Pr_code_g_5
-  DNA_code_g_6 -> Just Pr_code_g_6
-  DNA_code_g_7 -> Just Pr_code_g_7
-  DNA_code_g_8 -> Just Pr_code_g_8
-  DNA_code_g_9 -> Just Pr_code_g_9
-  DNA_code_g_10 -> Just Pr_code_g_10
-  _ -> Nothing
+  DNA_code_g_1 -> Pr_code_g_1
+  DNA_code_g_2 -> Pr_code_g_2
+  DNA_code_g_3 -> Pr_code_g_3
+  DNA_code_g_4 -> Pr_code_g_4
+  DNA_code_g_5 -> Pr_code_g_5
+  DNA_code_g_6 -> Pr_code_g_6
+  DNA_code_g_7 -> Pr_code_g_7
+  DNA_code_g_8 -> Pr_code_g_8
+  DNA_code_g_9 -> Pr_code_g_9
+  DNA_code_g_10 -> Pr_code_g_10
+  _ -> error "can not translate this DNA_Code element to a Protein_Code"
+
+from_Proteins_to_DNA :: Protein_Code -> DNA_Code
+from_Proteins_to_DNA prot = case prot of
+  Pr_code_g_1 -> DNA_code_g_1
+  Pr_code_g_2 -> DNA_code_g_2
+  Pr_code_g_3 -> DNA_code_g_3
+  Pr_code_g_4 -> DNA_code_g_4
+  Pr_code_g_5 -> DNA_code_g_5
+  Pr_code_g_6 -> DNA_code_g_6
+  Pr_code_g_7 -> DNA_code_g_7
+  Pr_code_g_8 -> DNA_code_g_8
+  Pr_code_g_9 -> DNA_code_g_9
+  Pr_code_g_10 -> DNA_code_g_10
+
 
 
 
@@ -200,14 +215,31 @@ data Cache_Memory rna = Cache_Memory (Map.Map rna [(rna,[rna])])
 -- but it is good to mention that biologically the stage exist 
 
 
-data Protein_Packages prot = Protein_Packages [prot]
-type Protein_Machines prot = Protein_Packages
+data Protein_Packages prot = Protein_Packages [prot] deriving (Show, Eq)
+type Protein_Machines prot = Protein_Packages prot 
 
 -- TODO clarify the point 
--- translation  = Lens' (Genome DNA_Code) Protein_Machines
+-- translator ::  Lens (Genome DNA_Code) (Protein_Packages Protein_Code) DNA_Code Protein_Code
+{-
+translator ::  Lens' (Genome DNA_Code) (Protein_Packages Protein_Code) 
+translator = lens getter setter
+  where
+    getter genome :: (Genome DNA_Code) -> (Protein_Packages Protein_Code)
+    setter genome  prot_package :: (Genome DNA_Code) -> (Protein_Packages Protein_Code) -> (Genome DNA_Code
+-}
+from_dna_block_to_machines :: Lens' (Maybe [DNA_Code]) (Protein_Packages Protein_Code)
+from_dna_block_to_machines = lens getter setter
+  where
+    getter dna_code = case dna_code of
+      (Just d_code) -> Protein_Packages (Prelude.map from_DNA_to_Proteins d_code )
+      _ -> error "there is no any DNA_Code block "
+    setter dna_code prot_code = case prot_code of
+      Protein_Packages [] -> Nothing
+      Protein_Packages p_code -> Just $ Prelude.map from_Proteins_to_DNA p_code
 
-protein_machine_ex1'' :: [a]
-protein_machine_ex1'' = []
+protein_block_ex1'' :: Protein_Packages Protein_Code
+protein_block_ex1'' = Map.fromList genome_ex1'' ^.at DNA_code_p_1 . from_dna_block_to_machines
+
 
 
 
@@ -215,5 +247,6 @@ main :: IO ()
 main = do
   print genes_block1
   print genes_dna_block_2_ex''
+  print protein_block_ex1''
 
 
