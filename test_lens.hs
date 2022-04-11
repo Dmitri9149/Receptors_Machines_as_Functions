@@ -70,10 +70,7 @@ genes_block1 :: Maybe [Smth]
 genes_block1 = ex1^.at An
 -- ###############
 
--- this operation correspont to the biological transcription 
--- it is quite comples and is effected by 'transcription machine'
-
-
+-- the data below 
 data DNA_Code = DNA_code_p_1 | DNA_code_g_1 | DNA_code_g_4 | DNA_code_g_5 | DNA_code_g_6
   |
   DNA_code_g_7 | DNA_code_g_8 | DNA_code_g_9 | DNA_code_g_10
@@ -91,6 +88,11 @@ data RNA_Code = RNA_code_p_1 | RNA_code_g_1 | RNA_code_g_4 | RNA_code_g_5 | RNA_
   |
   RNA_code_x_1 | RNA_code_x_2 | RNA_code_x_3
   deriving (Show, Ord, Eq)
+
+data Protein_Code = Pr_code_g_1 | Pr_code_g_2 | Pr_code_g_3 | Pr_code_g_4 | Pr_code_g_5
+  |
+  Pr_code_g_6 | Pr_code_g_7 | Pr_code_g_8 | Pr_code_g_9 | Pr_code_g_10
+
 
 -- this is real 'biological' transformation 
 -- the function reflects how code in DNA form (biologically it is string of des nucleotides, 
@@ -130,6 +132,35 @@ from_DNA_to_RNA dna = case dna of
   DNA_code_x_2 -> RNA_code_x_2
   DNA_code_x_3 -> RNA_code_x_3
 
+-- this is function for bacterial case 
+-- where protein machines are produced ('spawned') as mature processes 
+-- directly from DNA 
+-- in case of eucariots the DNA is firstly 'compiled' to 
+-- RNA cache memory -> from which the proteins machines are spawned 
+-- not every element of DNA_code correspond to a protein
+-- because some of DNA_code elements are regulatory elements 
+-- this elements are 'target' for special proteins 
+-- for example DNA_code elements like DNA_code_p_1 are 'promoters' 
+-- which are targeted by special proteins with name 'transcription factors' 
+-- this is where we tighten the knot ' -> it give us possibility to make 
+-- loops -> for example protein which invoke his own production from DNA_code 
+-- more about it later 
+from_DNA_to_Proteins :: DNA_Code -> Maybe Protein_Code
+from_DNA_to_Proteins dna = case dna of
+  DNA_code_g_1 -> Just Pr_code_g_1
+  DNA_code_g_2 -> Just Pr_code_g_2
+  DNA_code_g_3 -> Just Pr_code_g_3
+  DNA_code_g_4 -> Just Pr_code_g_4
+  DNA_code_g_5 -> Just Pr_code_g_5
+  DNA_code_g_6 -> Just Pr_code_g_6
+  DNA_code_g_7 -> Just Pr_code_g_7
+  DNA_code_g_8 -> Just Pr_code_g_8
+  DNA_code_g_9 -> Just Pr_code_g_9
+  DNA_code_g_10 -> Just Pr_code_g_10
+  _ -> Nothing
+
+
+
 -- simple 'backterial' genome structure Genome''
 -- there are no RNA , there is no extra nesting as in more complex
 -- structure for Genome' 
@@ -148,9 +179,35 @@ genome_ex1'' = let dnaBlock1 = [ DNA_code_g_2 , DNA_code_g_9] in
 genes_dna_block_2_ex'' :: Maybe [DNA_Code]
 genes_dna_block_2_ex'' = Map.fromList genome_ex1'' ^.at DNA_code_p_1
 
+-- this is data structure for the RNA as Cache_Memory which can be 
+-- used for agents like 'eukariotic cell' (like cells in human body) 
+-- which has the compiled RNA_code stage 
 data Cache_Memory'' rna = Cache_Memory'' [(rna,[rna])]
 data Cache_Memory rna = Cache_Memory (Map.Map rna [(rna,[rna])])
 
+-- if biologically this is just a list of strings in aminoacids alphabet 
+-- ## Genes_as_Code <- see the 
+-- this is just the protein strings collected together 
+-- the structure is a short living -> there is no a memory storage of 
+-- such collections protein strings 
+-- the protein strings are immediatelly folded to 3-D structures 
+-- after production from RNA strings (or from DNA strings in case of bacteria) 
+-- and collected together in lists : such 3-D folded and collected strings 
+-- we will name as protein machines : these are the active processes of the system  
+-- we will not introduce a new stage for teh 3-D folded proteins like 
+-- newtype Protein_Machines = Protein_Machine { folded :: Protein_Package }
+-- but will use the Protein_Machines as synonim to Protein_Packages 
+-- but it is good to mention that biologically the stage exist 
+
+
+data Protein_Packages prot = Protein_Packages [prot]
+type Protein_Machines prot = Protein_Packages
+
+-- TODO clarify the point 
+-- translation  = Lens' (Genome DNA_Code) Protein_Machines
+
+protein_machine_ex1'' :: [a]
+protein_machine_ex1'' = []
 
 
 
