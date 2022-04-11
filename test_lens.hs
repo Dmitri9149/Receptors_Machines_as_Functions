@@ -19,7 +19,7 @@ import Control.Lens
 --and will use it with a decorations like DNAGENE
 data Apphabet = A | B| C | D | E | F | G | I | J | K | L | M | N | O | P | Q | R | S | T | U | W | X | Y | Z
 --for simple backteria we can use : 
-data Genome'' dna = Genome'' [(dna,[dna])] deriving (Eq, Ord)
+data Genome'' dna = Genome'' [(dna,[dna])] deriving (Eq, Ord, Show)
 -- the (a,[a]) blocks correspond to the package of proteins : 
 -- a protein machine (active process in cell biology) is composed from 
 -- several proteins , that is why it is a [a] list linked to the 
@@ -30,7 +30,7 @@ data Genome'' dna = Genome'' [(dna,[dna])] deriving (Eq, Ord)
 -- ## see Genes_as_Code.hs 
 -- most probably a is to be modeled by Enumerable and Hashable 
 -- for example : 
-data Genome' dna = Genome' [(dna,[(dna,[dna])])]
+data Genome' dna = Genome' [(dna,[(dna,[dna])])] deriving (Show, Eq, Ord)
 -- or 
 -- the data are composet of "blocks" which are tuples (a, [a])
 -- linked with keys of type a 
@@ -40,7 +40,7 @@ data Genome' dna = Genome' [(dna,[(dna,[dna])])]
 -- and we will model the RNA blocks as Map.Map b [b]
 -- we will (try) to use Lenses for the transformations 
 -- the [b] blocks will be transformed to [p] 
-data Genome dna =  Genome (Map.Map dna [(dna,[dna])])
+data Genome dna =  Genome (Map.Map dna [(dna,[dna])]) deriving (Show, Eq, Ord)
 
 -- example how we can describe a simple backteria genome : 
 -- there is no RNA (cache memory /compiled code)
@@ -243,11 +243,46 @@ protein_block_ex1'' = Map.fromList genome_ex1'' ^.at DNA_code_p_1 . from_dna_blo
 translator :: [(DNA_Code,[DNA_Code])] -> DNA_Code -> Protein_Packages Protein_Code
 translator genome dna_code = Map.fromList (genome) ^.at (dna_code) . from_dna_block_to_machines
 
+particle_coupling_bool_ex1 :: DNA_Code -> Protein_Code -> Bool
+particle_coupling_bool_ex1 dna prot = case (dna,prot) of
+  (DNA_code_p_1, Pr_code_g_10) -> True
+  (DNA_code_p_3, Pr_code_g_7) -> True
+  _ -> False
+
+particle_coupling_ex1 :: Protein_Code -> Maybe DNA_Code
+particle_coupling_ex1 prot = case prot of
+          Pr_code_g_10 -> Just DNA_code_p_1
+          Pr_code_g_7 -> Just DNA_code_p_3
+          z -> Nothing
+
+
+genome_ex2'' :: [(DNA_Code, [DNA_Code])]
+genome_ex2'' =
+  [(DNA_code_p_1, [DNA_code_g_7])
+  ,
+  (DNA_code_p_3, [DNA_code_g_10])
+  ,
+  (DNA_code_p_2, [DNA_code_g_2, DNA_code_g_4])]
+
+interaction_1 :: Protein_Packages Protein_Code -> Genome'' DNA_Code
+  -> (Protein_Packages Protein_Code, Genome'' DNA_Code)
+interaction_1 (Protein_Packages prot) (Genome'' genome) =
+  if length prot /= 1
+    then (Protein_Packages prot, Genome'' genome)
+    else case particle_coupling_ex1 $ head prot  of
+  Just dna_code -> (translator  genome dna_code, Genome'' genome)
+  Nothing -> (Protein_Packages prot, Genome'' genome)
+
+res_ex2 :: (Protein_Packages Protein_Code, Genome'' DNA_Code)
+res_ex2 = interaction_1 (Protein_Packages [Pr_code_g_7]) (Genome'' genome_ex2'') 
+
+
 main :: IO ()
 main = do
   print genes_block1
   print genes_dna_block_2_ex''
   print protein_block_ex1''
   print $ translator genome_ex1'' DNA_code_p_2
+  print res_ex2
 
 
