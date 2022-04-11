@@ -241,7 +241,11 @@ protein_block_ex1'' :: Protein_Packages Protein_Code
 protein_block_ex1'' = Map.fromList genome_ex1'' ^.at DNA_code_p_1 . from_dna_block_to_machines
 
 translator :: [(DNA_Code,[DNA_Code])] -> DNA_Code -> Protein_Packages Protein_Code
-translator genome dna_code = Map.fromList (genome) ^.at (dna_code) . from_dna_block_to_machines
+translator genome dna_code = 
+  Map.fromList genome
+  ^.at dna_code 
+  . 
+  from_dna_block_to_machines
 
 particle_coupling_bool_ex1 :: DNA_Code -> Protein_Code -> Bool
 particle_coupling_bool_ex1 dna prot = case (dna,prot) of
@@ -284,5 +288,6 @@ main = do
   print protein_block_ex1''
   print $ translator genome_ex1'' DNA_code_p_2
   print res_ex2
+
 
 
